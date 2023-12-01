@@ -1,18 +1,17 @@
-package test.advent.edition2022
+package advent2023
 
+import advent2023.utils.runPuzzle
 import java.io.File
 
-val day = 1;
-val file = File("src/main/resources/edition2022/day${day}/input")
+const val day = 1
+val file = File("src/main/resources/advent2023/day${day}/input")
 
 class Puzzle(private val input: List<String>) {
     fun runPart1() {
-        println("Part 1 of Day $day")
         println(input)
     }
     
     fun runPart2() {
-        println("Part 2 of Day $day")
         println(input)      
     }
 }
@@ -20,7 +19,6 @@ class Puzzle(private val input: List<String>) {
 fun main() {
     val input = file.readLines()
     val puzzle = Puzzle(input)
-    puzzle.runPart1()
-    puzzle.runPart2()
+    runPuzzle(day, 1) { puzzle.runPart1() }
+    runPuzzle(day, 2) { puzzle.runPart2() }
 }
-

@@ -1,11 +1,11 @@
-package advent2023
+package advent2023.utils
 
 import kotlin.time.measureTime
 
-fun runPuzzle(part: Int, puzzlePart: () -> Unit) {
+fun runPuzzle(day: Int, part: Int, puzzle: () -> Unit) {
     println("Part $part of Day $day")
     val timeTaken = measureTime {
-        puzzlePart()
+        puzzle()
     }
     println("took $timeTaken")
 }
