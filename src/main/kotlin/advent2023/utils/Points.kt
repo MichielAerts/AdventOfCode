@@ -3,6 +3,36 @@ package advent2023.utils
 import advent2023.utils.WindDirection.*
 import kotlin.math.absoluteValue
 
+fun List<String>.to2DGridOfPoints(): List<List<Point>> = this.mapIndexed { y, r ->
+    r.toList().mapIndexed { x, v -> Point(x, y, v.digitToInt()) }
+}
+
+fun List<String>.to2DGridOfPointsWithValues(): List<List<Point>> = this.mapIndexed { y, r ->
+    r.toList().mapIndexed { x, v -> Point(x, y, value = v) }
+}
+
+fun initEmptyGrid(startX: Int = 0, endX: Int, startY: Int = 0, endY: Int): List<List<Point>> =
+    (startY..endY).map { y -> (startX..endX).map { Point(it, y) } }
+
+fun initEmpty3DGrid(startX: Int = 0, endX: Int, startY: Int = 0, endY: Int, startZ: Int = 0, endZ: Int): List<List<List<Point>>> =
+    (startZ..endZ).map { z -> (startY..endY).map { y -> (startX..endX).map { x -> Point(x, y, z) } } }
+
+fun List<List<Point>>.findSingleValueInGrid(v: Char): Point = this.flatten().find { it.value == v }!!
+
+fun List<List<Point>>.findAllValuesInGrid(v: Char): List<Point> = this.flatten().filter { it.value == v }
+
+fun List<List<Point>>.changePoint(pointToBeChanged: Point, c: Char) {
+    this.getPoint(pointToBeChanged.x, pointToBeChanged.y)?.value = c
+}
+
+fun List<List<Point>>.changePoints(points: Set<Point>, c: Char) {
+    for (pointToBeChanged in points) {
+        this.changePoint(pointToBeChanged, c)
+    }
+}
+
+fun List<List<Point>>.copy(): List<List<Point>> = this.map { it.map { it.copy() }.toList() }.toList()
+
 enum class WindDirection {
     N, NE, E, SE, S, SW, W, NW;
     companion object {
@@ -198,6 +228,20 @@ fun Pos.getNextPos(d: Direction): Pos = when (d) {
 
 fun List<List<Point>>.getDirectNeighbours(p: Point): PointAndNeighbours {
     val potentialNeighbours = listOf(Pos(p.x - 1, p.y), Pos(p.x + 1, p.y), Pos(p.x, p.y - 1), Pos(p.x, p.y + 1))
+    return PointAndNeighbours(p, potentialNeighbours.mapNotNull { this.getPoint(it.x, it.y) })
+}
+
+fun List<List<Point>>.getAdjacentNeighbours(p: Point): PointAndNeighbours {
+    val potentialNeighbours = listOf(
+        Pos(p.x - 1, p.y - 1),
+        Pos(p.x, p.y - 1),
+        Pos(p.x + 1, p.y - 1),
+        Pos(p.x - 1, p.y),
+        Pos(p.x + 1, p.y),
+        Pos(p.x - 1, p.y + 1),
+        Pos(p.x, p.y + 1),
+        Pos(p.x + 1, p.y + 1)
+    )
     return PointAndNeighbours(p, potentialNeighbours.mapNotNull { this.getPoint(it.x, it.y) })
 }
 
