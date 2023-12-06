@@ -26,6 +26,14 @@ fun <T> List<T>.toPair(): Pair<T, T> {
     return Pair(this[0], this[1])
 }
 
+val <T> List<T>.tail: List<T>
+    get() = subList(1, size)
+
+val <T> List<T>.head: T
+    get() = first()
+
+fun <T> List<T>.headTail() = Pair(head, tail)
+
 fun <E> List<E>.splitBy(splitter: (E) -> Boolean): List<List<E>> {
     val list = mutableListOf<MutableList<E>>()
     var currentList = mutableListOf<E>()
