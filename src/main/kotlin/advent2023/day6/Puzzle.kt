@@ -2,7 +2,9 @@ package advent2023.day6
 
 import advent2023.utils.product
 import advent2023.utils.runPuzzle
+import advent2023.utils.solveQuadraticEquation
 import java.io.File
+import kotlin.math.roundToInt
 
 const val day = 6
 val file = File("src/main/resources/advent2023/day${day}/input")
@@ -21,6 +23,10 @@ class Puzzle(private val input: List<String>) {
         val race = Race(time, distance)
         println(
             race.waysToWin()
+        )
+        val (first, second) = solveQuadraticEquation(-1.0, time.toDouble(), -distance.toDouble())!!
+        println(
+            (second - first).roundToInt()
         )
     }
 }
