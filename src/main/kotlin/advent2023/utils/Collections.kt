@@ -76,6 +76,11 @@ fun List<Char>.countOccurrences(c: Char): Int = joinToString("").count { it == c
 
 fun List<Char>.hasAllDifferentCharacters(): Boolean = this.size == this.toSet().size
 
+fun <T> List<T>.asRepeatedSequence() =
+    generateSequence(0) {
+        (it + 1) % this.size
+    }.map(::get)
+
 fun <E> List<E>.findOrThrow(function: (E) -> Boolean): E =
     this.find(function) ?: throw IllegalStateException("not found")
 
