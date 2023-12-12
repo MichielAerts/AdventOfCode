@@ -212,13 +212,6 @@ data class Pos(val x: Int, val y: Int) {
     fun getManhattanDistance(other: Pos): Int = (this.x - other.x).absoluteValue + (this.y - other.y).absoluteValue
 }
 
-fun Pos.move(d: Direction): Pos = when (d) {
-    Direction.UP -> Pos(this.x, this.y + 1)
-    Direction.DOWN -> Pos(this.x, this.y - 1)
-    Direction.RIGHT -> Pos(this.x + 1, this.y)
-    Direction.LEFT -> Pos(this.x - 1, this.y)
-}
-
 fun Pos.getNextPos(d: Direction): Pos = when (d) {
     Direction.UP -> Pos(this.x, this.y - 1)
     Direction.DOWN -> Pos(this.x, this.y + 1)
@@ -230,6 +223,27 @@ fun List<List<Point>>.getDirectNeighbours(p: Point): PointAndNeighbours {
     val potentialNeighbours = listOf(Pos(p.x - 1, p.y), Pos(p.x + 1, p.y), Pos(p.x, p.y - 1), Pos(p.x, p.y + 1))
     return PointAndNeighbours(p, potentialNeighbours.mapNotNull { this.getPoint(it.x, it.y) })
 }
+
+fun List<List<Point>>.getNeighboursAndDirection(p: Point): Map<Direction, Point> {
+    val potentialNeighbours = mapOf(
+        Direction.UP to Pos(p.x, p.y - 1),
+        Direction.RIGHT to Pos(p.x + 1, p.y),
+        Direction.DOWN to Pos(p.x, p.y + 1),
+        Direction.LEFT to Pos(p.x - 1, p.y)
+    )
+    return potentialNeighbours
+        .filter { this.getPoint(it.value.x, it.value.y) != null }
+        .map { it.key to this.getPoint(it.value.x, it.value.y)!! }.toMap()
+}
+
+fun Point.findDirectionOfThisTo(o: Point) =
+    when {
+        (this.x == o.x && this.y - o.y == 1) -> Direction.DOWN
+        (this.x == o.x && o.y - this.y == 1) -> Direction.UP
+        (this.y == o.y && this.x - o.x == 1) -> Direction.RIGHT
+        (this.y == o.y && o.x - this.x == 1) -> Direction.LEFT
+        else -> throw IllegalStateException("not a direct neightbour")
+    }
 
 fun List<List<Point>>.getAdjacentNeighbours(p: Point): PointAndNeighbours {
     val potentialNeighbours = listOf(
@@ -287,6 +301,12 @@ fun List<List<Point>>.getPoint(x: Int, y: Int): Point? {
 }
 
 fun List<List<Point>>.getPoint(pos: Pos): Point? = getPoint(pos.x, pos.y)
+fun List<List<Point>>.getPointAfterMove(current: Point, direction: Direction): Point = when(direction) {
+    Direction.UP -> this.getPoint(current.x, current.y - 1)!!
+    Direction.DOWN -> this.getPoint(current.x, current.y + 1)!!
+    Direction.RIGHT -> this.getPoint(current.x + 1, current.y)!!
+    Direction.LEFT -> this.getPoint(current.x - 1, current.y)!!
+}
 
 fun List<List<List<Point>>>.getPoint(x: Int, y: Int, z: Int): Point? {
     if (x < 0 || x > (this[0][0].size - 1) || y < 0 || y > (this[0].size - 1) || z < 0 || z > (this.size - 1)) return null
