@@ -2,6 +2,8 @@ package advent2023.utils
 
 import advent2023.utils.WindDirection.*
 import kotlin.math.absoluteValue
+import kotlin.math.max
+import kotlin.math.min
 
 fun List<String>.to2DGridOfPoints(): List<List<Point>> = this.mapIndexed { y, r ->
     r.toList().mapIndexed { x, v -> Point(x, y, v.digitToInt()) }
@@ -315,9 +317,17 @@ fun List<List<List<Point>>>.getPoint(x: Int, y: Int, z: Int): Point? {
 
 fun List<List<Point>>.getHighestRowContaining(c: Char): Int = this.indexOfLast { it.any { it.value == c } }
 
+fun Pair<Point, Point>.getXRange(): IntRange =
+    min(first.x, second.x) .. max(first.x, second.x)
+
+fun Pair<Point, Point>.getYRange(): IntRange =
+    min(first.y, second.y) .. max(first.y, second.y)
+
 fun List<List<Point>>.getRow(y: Int): List<Point> = this[y]
 
 fun List<List<Point>>.getColumn(x: Int): List<Point> = this.map { it[x] }
+
+fun List<List<Point>>.getColumns(): List<List<Point>> = this.transpose()
 
 fun List<List<Point>>.printZ() = this.forEach { println(it.map { it.z }.joinToString("")) }
 
