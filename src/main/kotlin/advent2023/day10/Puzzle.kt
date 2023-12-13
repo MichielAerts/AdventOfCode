@@ -15,7 +15,55 @@ class Puzzle(private val input: List<String>) {
     }
 
     fun runPart2() {
-        println(input)      
+        val allTiles = input.to2DGridOfPointsWithValues()
+        val pipeNetwork = PipeNetwork.createPipeNetwork(allTiles)
+        // clean up loose pipes, change S to actual pipe
+        allTiles.changePoints(allTiles.flatten().toSet() - pipeNetwork.network.toSet(), '.')
+        allTiles.changePoint(allTiles.findSingleValueInGrid('S'), 'F')
+        
+        // create tiles with space in between
+        var tiles = allTiles.map { it.joinToString("") { it.value.toString() } }
+            .zip(List(input.size) { List(input[0].length) { '.'}.joinToString("") })
+            .flatMap { listOf(it.first, it.second) }
+            .map { it.toList().joinToString(".") }
+            .to2DGridOfPointsWithValues()
+        // close the loop once more
+        for (row in tiles) for (point in row) {
+            if (point.isInBetweenTiles()) {
+                val neighbours = tiles.getNeighboursAndDirection(point).mapValues { it.value.value }
+                when {
+                    neighbours[LEFT] in listOf('L', '-', 'F') && neighbours[RIGHT] in listOf('J', '-', '7') -> point.value = '-'
+                    neighbours[UP] in listOf('7', 'F', '|') && neighbours[DOWN] in listOf('L', 'J', '|') -> point.value = '|'    
+                }
+            }
+        }
+        
+        val ySize = tiles.size
+        val xSize = tiles[0].size
+        var newTiles = tiles.copy()
+
+        // every tile on outside which is not part of network is O
+        newTiles.changePoints( tiles.flatten().filter {
+            (it.x == 0 || it.x == (xSize - 1) || it.y == 0 || it.y == (ySize - 1)) && it.value == '.'
+        }.toSet(), 'O')
+        newTiles.printV()
+        var tilesChanged = 1
+        // let the O spread till all tiles outside the loop are covered
+        while (tilesChanged != 0) {
+            tiles = newTiles.copy()
+            newTiles = newTiles.copy()
+            val pointsToChange = tiles.flatten().filter {
+                it.value == '.' && tiles.getDirectNeighbours(it).neighbours.any { it.value == 'O' }
+            }.toSet()
+            tilesChanged = pointsToChange.size
+            newTiles.changePoints(pointsToChange, 'O')
+            newTiles.printV()
+            println()
+        }
+        val originalTiles = newTiles.filter { it[0].y % 2 == 0 }.map { it.filter { it.x % 2 == 0 } }
+        originalTiles.printV()
+        println(originalTiles.flatten().count { it.value == '.' })
+        // remove add 'half' points again, count tiles with .
     }
 }
 
@@ -44,6 +92,9 @@ data class PipeNetwork(val s: Point, val network: List<Point>) {
     }
 }
 
+private fun Point.isInBetweenTiles(): Boolean =
+    x % 2 == 1 || y % 2 == 1
+
 /*
 | is a vertical pipe connecting north and south.
 - is a horizontal pipe connecting east and west.
@@ -56,10 +107,10 @@ S is the starting position of the animal; there is a pipe on this tile, but your
  */
 private fun List<List<Point>>.findAConnectingTileTo(s: Point): Point {
     val neighbours = this.getNeighboursAndDirection(s)
-    if (neighbours.getValue(UP).value in listOf('|', '7', 'F')) return neighbours.getValue(UP)
-    if (neighbours.getValue(DOWN).value in listOf('|', 'L', 'J')) return neighbours.getValue(DOWN)
-    if (neighbours.getValue(LEFT).value in listOf('-', 'F', 'L')) return neighbours.getValue(LEFT)
-    if (neighbours.getValue(RIGHT).value in listOf('-', '7', 'J')) return neighbours.getValue(RIGHT)
+    if (neighbours[UP]?.value in listOf('|', '7', 'F')) return neighbours.getValue(UP)
+    if (neighbours[DOWN]?.value in listOf('|', 'L', 'J')) return neighbours.getValue(DOWN)
+    if (neighbours[LEFT]?.value in listOf('-', 'F', 'L')) return neighbours.getValue(LEFT)
+    if (neighbours[RIGHT]?.value in listOf('-', '7', 'J')) return neighbours.getValue(RIGHT)
     throw IllegalStateException("couldn't find a connecting tile to $s")
 }
 
@@ -80,6 +131,6 @@ private fun List<List<Point>>.findNextConnectingTile(current: Point, previous: P
 fun main() {
     val input = file.readLines()
     val puzzle = Puzzle(input)
-    runPuzzle(day, 1) { puzzle.runPart1() }
+//    runPuzzle(day, 1) { puzzle.runPart1() }
     runPuzzle(day, 2) { puzzle.runPart2() }
 }
