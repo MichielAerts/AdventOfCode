@@ -303,11 +303,14 @@ fun List<List<Point>>.getPoint(x: Int, y: Int): Point? {
 }
 
 fun List<List<Point>>.getPoint(pos: Pos): Point? = getPoint(pos.x, pos.y)
-fun List<List<Point>>.getPointAfterMove(current: Point, direction: Direction): Point = when(direction) {
-    Direction.UP -> this.getPoint(current.x, current.y - 1)!!
-    Direction.DOWN -> this.getPoint(current.x, current.y + 1)!!
-    Direction.RIGHT -> this.getPoint(current.x + 1, current.y)!!
-    Direction.LEFT -> this.getPoint(current.x - 1, current.y)!!
+fun List<List<Point>>.getPointAfterMoveSure(current: Point, direction: Direction): Point = 
+    getPointAfterMove(current, direction)!!
+
+fun List<List<Point>>.getPointAfterMove(current: Point, direction: Direction): Point? = when(direction) {
+    Direction.UP -> this.getPoint(current.x, current.y - 1)
+    Direction.DOWN -> this.getPoint(current.x, current.y + 1)
+    Direction.RIGHT -> this.getPoint(current.x + 1, current.y)
+    Direction.LEFT -> this.getPoint(current.x - 1, current.y)
 }
 
 fun List<List<List<Point>>>.getPoint(x: Int, y: Int, z: Int): Point? {

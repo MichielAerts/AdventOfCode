@@ -117,12 +117,12 @@ private fun List<List<Point>>.findAConnectingTileTo(s: Point): Point {
 private fun List<List<Point>>.findNextConnectingTile(current: Point, previous: Point): Pair<Point, Point> {
     val previousMove = current.findDirectionOfThisTo(previous)
     val nextPoint = when (current.value) {
-        '|' -> this.getPointAfterMove(current, previousMove)
-        '-' -> this.getPointAfterMove(current, previousMove)
-        'L' -> if (previousMove == DOWN) this.getPointAfterMove(current, RIGHT) else this.getPointAfterMove(current, UP)
-        'J' -> if (previousMove == DOWN) this.getPointAfterMove(current, LEFT) else this.getPointAfterMove(current, UP)
-        '7' -> if (previousMove == UP) this.getPointAfterMove(current, LEFT) else this.getPointAfterMove(current, DOWN)
-        'F' -> if (previousMove == UP) this.getPointAfterMove(current, RIGHT) else this.getPointAfterMove(current, DOWN)
+        '|' -> this.getPointAfterMoveSure(current, previousMove)
+        '-' -> this.getPointAfterMoveSure(current, previousMove)
+        'L' -> if (previousMove == DOWN) this.getPointAfterMoveSure(current, RIGHT) else this.getPointAfterMoveSure(current, UP)
+        'J' -> if (previousMove == DOWN) this.getPointAfterMoveSure(current, LEFT) else this.getPointAfterMoveSure(current, UP)
+        '7' -> if (previousMove == UP) this.getPointAfterMoveSure(current, LEFT) else this.getPointAfterMoveSure(current, DOWN)
+        'F' -> if (previousMove == UP) this.getPointAfterMoveSure(current, RIGHT) else this.getPointAfterMoveSure(current, DOWN)
         else -> throw IllegalStateException("nop")
     }
     return Pair(nextPoint, current)
