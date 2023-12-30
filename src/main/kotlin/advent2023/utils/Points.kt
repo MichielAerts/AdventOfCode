@@ -33,6 +33,31 @@ fun List<List<Point>>.changePoints(points: Set<Point>, c: Char) {
     }
 }
 
+fun List<List<Point>>.floodFromOutside(empty: Char = '.', replacement: Char = 'O'): List<List<Point>> {
+    // every tile on outside which is not part of loop is O
+    val ySize = this.size
+    val xSize = this[0].size
+    var currentGrid: List<List<Point>>
+    var newGrid = this.copy()
+    
+    newGrid.changePoints( flatten().filter {
+        (it.x == 0 || it.x == (xSize - 1) || it.y == 0 || it.y == (ySize - 1)) && it.value == empty
+    }.toSet(), replacement)
+    var tilesChanged = 1
+    
+    // let the O spread till all tiles outside the loop are covered
+    while (tilesChanged != 0) {
+        currentGrid = newGrid.copy()
+        newGrid = newGrid.copy()
+        val pointsToChange = currentGrid.flatten().filter {
+            it.value == empty && currentGrid.getDirectNeighbours(it).neighbours.any { it.value == replacement }
+        }.toSet()
+        tilesChanged = pointsToChange.size
+        newGrid.changePoints(pointsToChange, replacement)
+    }
+    return newGrid
+}
+
 fun List<List<Point>>.copy(): List<List<Point>> = this.map { it.map { it.copy() }.toList() }.toList()
 
 enum class WindDirection {
@@ -187,6 +212,8 @@ open class Point(val x: Int, val y: Int, var z: Int = 0, var value: Char = '.') 
     fun getManhattanDistance(other: Point) = (this.x - other.x).absoluteValue + (this.y - other.y).absoluteValue
 
     open fun copy() = Point(x, y, z, value)
+    fun isInSameDirectionAs(otherFourPoints: List<Point>): Boolean =
+        otherFourPoints.size == 4 && (otherFourPoints.all { it.x == this.x } || otherFourPoints.all { it.y == this.y })
 }
 
 data class Distance(val dx: Int, val dy: Int, val dz: Int) {
@@ -212,13 +239,14 @@ data class Pos(val x: Int, val y: Int) {
     )
 
     fun getManhattanDistance(other: Pos): Int = (this.x - other.x).absoluteValue + (this.y - other.y).absoluteValue
+    operator fun plus(o: Pos): Pos = Pos(x + o.x, y + o.y)
 }
 
-fun Pos.getNextPos(d: Direction): Pos = when (d) {
-    Direction.UP -> Pos(this.x, this.y - 1)
-    Direction.DOWN -> Pos(this.x, this.y + 1)
-    Direction.RIGHT -> Pos(this.x + 1, this.y)
-    Direction.LEFT -> Pos(this.x - 1, this.y)
+fun Pos.getNextPos(d: Direction, amount: Int = 1): Pos = when (d) {
+    Direction.UP -> Pos(this.x, this.y - amount)
+    Direction.DOWN -> Pos(this.x, this.y + amount)
+    Direction.RIGHT -> Pos(this.x + amount, this.y)
+    Direction.LEFT -> Pos(this.x - amount, this.y)
 }
 
 fun List<List<Point>>.getDirectNeighbours(p: Point): PointAndNeighbours {

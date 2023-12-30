@@ -13,6 +13,12 @@ fun solveQuadraticEquation(a: Double, b: Double, c: Double): Pair<Double, Double
     return Pair(root1, root2)
 }
 
+fun Int.isUneven(): Boolean =
+    this % 2 == 1
+
+fun Int.isEven(): Boolean =
+    this % 2 == 0
+
 private fun lcm(a: Long, b: Long): Long {
     return a * (b / gcd(a, b))
 }
