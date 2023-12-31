@@ -85,7 +85,7 @@ data class ConditionRecord(val record: String, val groups: List<Int>) {
     companion object {
         fun createRecord(input: String): ConditionRecord {
             val (rec, groups) = input.split(" ")
-                .mapToPair<String, List<Int>>(transformRight = { it.split(",").map { it.toInt() } })
+                .mapToPair<String, String, List<Int>>(transformRight = { it.split(",").map { it.toInt() } })
             return ConditionRecord(rec, groups)
         }
     }

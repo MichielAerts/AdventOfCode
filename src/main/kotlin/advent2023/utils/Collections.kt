@@ -26,8 +26,16 @@ fun <T> List<T>.toPair(): Pair<T, T> {
     return Pair(this[0], this[1])
 }
 
+//@Suppress("UNCHECKED_CAST")
+//fun <A, B> List<String>.mapToPair(transformLeft: (String) -> A = { it as A }, transformRight: (String) -> B = { it as B }): Pair<A, B> {
+//    if (this.size != 2) {
+//        throw IllegalArgumentException("List is not of length 2!")
+//    }
+//    return Pair(transformLeft(this[0]), transformRight(this[1]))
+//}
+
 @Suppress("UNCHECKED_CAST")
-fun <A, B> List<String>.mapToPair(transformLeft: (String) -> A = { it as A }, transformRight: (String) -> B = { it as B }): Pair<A, B> {
+fun <R, A, B> List<R>.mapToPair(transformLeft: (R) -> A = { it as A }, transformRight: (R) -> B = { it as B }): Pair<A, B> {
     if (this.size != 2) {
         throw IllegalArgumentException("List is not of length 2!")
     }
