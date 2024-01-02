@@ -6,6 +6,9 @@ fun List<Int>.product(): Int = this.reduce { acc, i -> acc * i }
 
 fun List<Long>.product(): Long = this.reduce { acc, i -> acc * i }
 
+fun <E> List<E>.repeat(copyFactor: Int): List<E> =
+    (1..< copyFactor).fold(this) { acc, _ -> acc + this}
+
 inline fun <T> Iterable<T>.takeWhileInclusive(
     predicate: (T) -> Boolean
 ): List<T> {
