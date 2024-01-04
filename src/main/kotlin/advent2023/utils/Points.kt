@@ -27,12 +27,23 @@ fun List<List<Point>>.changePoint(pointToBeChanged: Point, c: Char) {
     this.getPoint(pointToBeChanged.x, pointToBeChanged.y)?.value = c
 }
 
+fun List<List<List<Point>>>.changePoint3D(pointToBeChanged: Point, c: Char) {
+    this.getPoint(pointToBeChanged.x, pointToBeChanged.y, pointToBeChanged.z)?.value = c
+}
+
+fun List<List<List<Point>>>.allPoints(): List<Point> = flatten().flatten()
+
 fun List<List<Point>>.changePoints(points: Set<Point>, c: Char) {
     for (pointToBeChanged in points) {
         this.changePoint(pointToBeChanged, c)
     }
 }
 
+fun List<List<List<Point>>>.changePoints3D(points: Set<Point>, c: Char) {
+    for (pointToBeChanged in points) {
+        this.changePoint3D(pointToBeChanged, c)
+    }
+}
 fun List<List<Point>>.floodFromOutside(empty: Char = '.', replacement: Char = 'O'): List<List<Point>> {
     // every tile on outside which is not part of loop is O
     val ySize = this.size
@@ -185,6 +196,18 @@ open class Point(val x: Int, val y: Int, var z: Int = 0, var value: Char = '.') 
         else -> throw IllegalArgumentException("shouldn't")
     }
 
+    fun getPointsInLineTo3D(end: Point): List<Point> = when {
+        this.x != end.x -> (min(this.x, end.x)..max(this.x, end.x)).map { Point(it, this.y, this.z) }
+        this.y != end.y -> (min(this.y, end.y)..max(this.y, end.y)).map { Point(this.x, it, this.z) }
+        this.z != end.z -> (min(this.z, end.z)..max(this.z, end.z)).map { Point(this.x, this.y, it) }
+        this.x == end.x && this.y == end.y && this.z == end.z -> listOf(Point(this.x, this.y, this.z))
+        else -> throw IllegalArgumentException("shouldn't happen: start $this, end $end")
+    }
+    
+    fun lookDown(grid: List<List<List<Point>>>): List<Point> = 
+        // TODO solve case of standing up brick
+        grid.getPillar(this.x, this.y).subList(0, this.z).reversed()
+        
     fun unconnectedSides(cubes: List<Point>): Int {
         val potentialNeighbours = listOf(
             Point(this.x - 1, this.y, this.z),
@@ -211,7 +234,7 @@ open class Point(val x: Int, val y: Int, var z: Int = 0, var value: Char = '.') 
 
     fun getManhattanDistance(other: Point) = (this.x - other.x).absoluteValue + (this.y - other.y).absoluteValue
 
-    open fun copy() = Point(x, y, z, value)
+    open fun copy(x: Int = this.x, y: Int = this.y, z: Int = this.z, value: Char = this.value) = Point(x, y, z, value)
     fun isInSameDirectionAs(otherFourPoints: List<Point>): Boolean =
         otherFourPoints.size == 4 && (otherFourPoints.all { it.x == this.x } || otherFourPoints.all { it.y == this.y })
 }
@@ -357,6 +380,8 @@ fun Pair<Point, Point>.getYRange(): IntRange =
 fun List<List<Point>>.getRow(y: Int): List<Point> = this[y]
 
 fun List<List<Point>>.getColumn(x: Int): List<Point> = this.map { it[x] }
+
+fun List<List<List<Point>>>.getPillar(x: Int, y: Int): List<Point> = this.map { it[y][x] }
 
 fun List<List<Point>>.getColumns(): List<List<Point>> = this.transpose()
 
