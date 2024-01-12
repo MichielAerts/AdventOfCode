@@ -4,9 +4,6 @@ import advent2023.utils.mapToPair
 import advent2023.utils.runPuzzle
 import org.paukov.combinatorics3.Generator
 import java.io.File
-import kotlin.math.max
-import kotlin.math.pow
-import kotlin.math.roundToLong
 
 const val day = 12
 val file = File("src/main/resources/advent2023/day${day}/input")
@@ -20,37 +17,65 @@ class Puzzle(private val input: List<String>) {
     }
 
     fun runPart2() {
-        val map = input.map { ConditionRecord.createRecord(it) }
-            .associateWith { it.findArrangements() }
-        val qFirstMap = map.keys.associateWith { it.findNoOfArrangements("?${it.record}") }
-        val qLastMap = map.keys.associateWith { it.findNoOfArrangements("${it.record}?") }
-
-        val qFirstTotal = qFirstMap.mapValues { map.getValue(it.key).size * it.value.toDouble().pow(4.0).roundToLong() }
-        val qLastTotal = qLastMap.mapValues { map.getValue(it.key).size * it.value.toDouble().pow(4.0).roundToLong() }
-        map.forEach {
-            println("${it.key} normal: ${it.value} q-first: ${qFirstMap.get(it.key)} q-last: ${qLastMap.get(it.key)}")
-        }
-        map.forEach {
-            println(
-                "multiplying ${it.key}, simple: ${it.value} q-first ${
-                    it.value.size * qFirstMap.getValue(it.key).toDouble().pow(4.0).roundToLong()
-                } " +
-                        "q-last: ${it.value.size * qLastMap.getValue(it.key).toDouble().pow(4.0).roundToLong()}}"
-            )
-        }
-        println(qFirstTotal)
-        println(qLastTotal)
-        // first or last -> go for the high one, only exception is if extra ? is forced . (= # as last)
-        // 315325593540 too low
-        println(
-            map.keys.sumOf { key ->
-                val qFirst = qFirstTotal.getValue(key)
-                val qLast = qLastTotal.getValue(key)
-                val lastIsSpring = map.getValue(key).all { (it.last() == '#' || it.first() == '#') }
-                if (lastIsSpring) qLast else max(qLast, qFirst)
-            }
-        )
+        println(input.map { ConditionRecord.createFullRecord(it) }
+            .sumOf { findNoOfArrangements(it.record, it.groups) })
     }
+}
+
+private val cache = mutableMapOf<Pair<String, List<Int>>, Long>()
+// after ash42
+fun findNoOfArrangements(record: String, groups: List<Int>): Long {
+    val key = Pair(record, groups)
+    if (cache.containsKey(key)) return cache.getValue(key)
+    
+    if (record.isEmpty())
+        // found a solution
+        return if (groups.isEmpty()) 1 else 0
+    
+    var number = 0L
+    when(record[0]) {
+        '.' ->
+            // no spring present, skip
+            number = findNoOfArrangements(record.drop(1), groups)
+        '?' ->
+            // could be empty or spring, add both
+            number = findNoOfArrangements('.' + record.drop(1), groups) + 
+                findNoOfArrangements('#' + record.drop(1), groups)
+        '#' -> {
+            if (groups.isEmpty()) {
+                number = 0
+            } else {
+                val currentSpringLength = groups[0]
+
+                if (currentSpringLength > record.length || record.take(currentSpringLength).any { it == '.' }) {
+                    // not a valid solution
+                    number = 0
+                } else {
+                    val newGroups = groups.drop(1)
+                    when {
+                        currentSpringLength == record.length ->
+                            // remaining spring length is record length, we are done
+                            number = if (newGroups.isEmpty()) 1 else 0
+
+                        record[currentSpringLength] == '.' ->
+                            // we have found a group, continue and skip .
+                            number = findNoOfArrangements(record.drop(currentSpringLength + 1), newGroups)
+
+                        record[currentSpringLength] == '?' ->
+                            // we have found a group, continue, ? has to be .
+                            number = findNoOfArrangements('.' + record.drop(currentSpringLength + 1), newGroups)
+
+                        else ->
+                            // next character is a #, not possible
+                            number = 0
+                    }
+                }
+            }
+        }
+        else -> throw IllegalStateException()
+    }
+    cache[key] = number
+    return number
 }
 
 data class ConditionRecord(val record: String, val groups: List<Int>) {
@@ -67,25 +92,20 @@ data class ConditionRecord(val record: String, val groups: List<Int>) {
             .map { input.replaceInstances('?', it) }
             .count { it.split(Regex("\\.+")).filter { it.isNotEmpty() }.map { it.length } == inputGroups }
     }
-
-    fun findArrangements(): List<String> {
-        val questionMarks = record.count { it == '?' }
-        val knownSprings = record.count { it == '#' }
-        val totalSprings = groups.sum()
-        val unknownSprings = totalSprings - knownSprings
-        val unknownEmptySpots = questionMarks - unknownSprings
-        val combinations = Generator.permutation(
-            List(unknownSprings) { '#' } + List(unknownEmptySpots) { '.' }
-        ).simple().stream().toList()
-        return combinations
-            .map { record.replaceInstances('?', it) }
-            .filter { it.split(Regex("\\.+")).filter { it.isNotEmpty() }.map { it.length } == groups }
-    }
-
+   
     companion object {
         fun createRecord(input: String): ConditionRecord {
             val (rec, groups) = input.split(" ")
                 .mapToPair<String, String, List<Int>>(transformRight = { it.split(",").map { it.toInt() } })
+            return ConditionRecord(rec, groups)
+        }
+
+        fun createFullRecord(input: String): ConditionRecord {
+            val (rec, groups) = input.split(" ")
+                .mapToPair(
+                    transformLeft = { r -> List(5) { r }.joinToString("?") },
+                    transformRight = { s -> List(5) { s.split(",").map { it.toInt() } }.flatten() }
+                )
             return ConditionRecord(rec, groups)
         }
     }
