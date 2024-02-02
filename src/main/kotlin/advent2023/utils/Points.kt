@@ -397,3 +397,12 @@ fun List<List<List<Point>>>.printV3D() = this.forEach {
 }
 
 data class PointAndNeighbours(val point: Point, val neighbours: List<Point>)
+
+
+fun <K> Map<K, List<K>>.dfs(source: K, found: Set<K> = setOf()): Set<K> =
+    if (get(source).isNullOrEmpty()) {
+        emptySet()
+    } else {
+        val newlyFoundKeys = getValue(source).filter { it !in found }
+        (newlyFoundKeys + newlyFoundKeys.flatMap { dfs(it, found + newlyFoundKeys) }).toSet()
+    }
