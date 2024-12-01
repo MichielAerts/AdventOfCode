@@ -1,8 +1,8 @@
 package advent2023.day5
 
-import advent2023.utils.headTail
-import advent2023.utils.runPuzzle
-import advent2023.utils.splitBy
+import lib.headTail
+import lib.runPuzzle
+import lib.splitBy
 import java.io.File
 
 const val day = 5

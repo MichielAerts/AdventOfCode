@@ -1,8 +1,8 @@
 package advent2023.day16
 
 import advent2023.day16.Optic.*
-import advent2023.utils.*
-import advent2023.utils.Direction.*
+import lib.*
+import lib.Direction.*
 import java.io.File
 
 const val day = 16

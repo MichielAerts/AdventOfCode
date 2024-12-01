@@ -1,18 +1,14 @@
-package advent2023
+package advent2024
 
-import lib.RegexM
 import lib.runPuzzle
 import java.io.File
 
 const val day = 1
-val file = File("src/main/resources/advent2023/day${day}/input")
+val file = File("src/main/resources/advent2024/day${day}/input")
 
 class Puzzle(private val input: List<String>) {
     fun runPart1() {
-//        val regex = RegexM.toRegex("(.*AB((C|D*E)F)*G)")
-        val regex = RegexM.toRegex("((A*B|AC)D)")
-        println(regex)
-        println(regex.match("AABD"))
+        println(input)
     }
 
     fun runPart2() {

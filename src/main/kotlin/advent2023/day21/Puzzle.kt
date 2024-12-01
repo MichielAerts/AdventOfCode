@@ -1,6 +1,6 @@
 package advent2023.day21
 
-import advent2023.utils.*
+import lib.*
 import java.io.File
 
 const val day = 21

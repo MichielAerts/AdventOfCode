@@ -1,7 +1,7 @@
 package advent2023.day3
 
 import advent2023.day3.PartNumber.Companion.toPartNumber
-import advent2023.utils.*
+import lib.*
 import java.io.File
 
 const val day = 3

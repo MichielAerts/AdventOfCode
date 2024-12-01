@@ -1,7 +1,7 @@
 package advent2023.day12
 
-import advent2023.utils.mapToPair
-import advent2023.utils.runPuzzle
+import lib.mapToPair
+import lib.runPuzzle
 import org.paukov.combinatorics3.Generator
 import java.io.File
 

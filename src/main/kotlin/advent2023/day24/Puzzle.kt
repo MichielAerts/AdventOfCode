@@ -1,7 +1,7 @@
 package advent2023.day24
 
-import advent2023.utils.mapToPair
-import advent2023.utils.runPuzzle
+import lib.mapToPair
+import lib.runPuzzle
 import org.apache.commons.math3.linear.Array2DRowRealMatrix
 import org.apache.commons.math3.linear.ArrayRealVector
 import org.apache.commons.math3.linear.LUDecomposition

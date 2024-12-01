@@ -1,6 +1,6 @@
 package advent2023.day17
 
-import advent2023.utils.*
+import lib.*
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath
 import org.jgrapht.graph.DefaultWeightedEdge
 import org.jgrapht.graph.SimpleDirectedWeightedGraph

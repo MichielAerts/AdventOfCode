@@ -1,6 +1,5 @@
-package advent2023.utils
+package lib
 
-import advent2023.utils.WindDirection.*
 import kotlin.math.absoluteValue
 import kotlin.math.max
 import kotlin.math.min
@@ -334,14 +333,14 @@ private fun getSurroundingPositions(p: Point): Map<WindDirection, Pos> {
     val x = p.x
     val y = p.y
     return mapOf(
-        N to Pos(x, y - 1),
-        NE to Pos(x + 1, y - 1),
-        E to Pos(x + 1, y),
-        SE to Pos(x + 1, y + 1),
-        S to Pos(x, y + 1),
-        SW to Pos(x - 1, y + 1),
-        W to Pos(x - 1, y),
-        NW to Pos(x - 1, y - 1)
+        WindDirection.N to Pos(x, y - 1),
+        WindDirection.NE to Pos(x + 1, y - 1),
+        WindDirection.E to Pos(x + 1, y),
+        WindDirection.SE to Pos(x + 1, y + 1),
+        WindDirection.S to Pos(x, y + 1),
+        WindDirection.SW to Pos(x - 1, y + 1),
+        WindDirection.W to Pos(x - 1, y),
+        WindDirection.NW to Pos(x - 1, y - 1)
     )
 }
 

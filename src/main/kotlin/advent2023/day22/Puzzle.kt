@@ -1,6 +1,6 @@
 package advent2023.day22
 
-import advent2023.utils.*
+import lib.*
 import java.io.File
 import java.util.*
 

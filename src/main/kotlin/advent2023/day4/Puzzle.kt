@@ -1,7 +1,7 @@
 package advent2023.day4
 
-import advent2023.utils.findGroupAsInt
-import advent2023.utils.runPuzzle
+import lib.findGroupAsInt
+import lib.runPuzzle
 import java.io.File
 import kotlin.math.pow
 

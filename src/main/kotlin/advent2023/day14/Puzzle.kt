@@ -1,7 +1,7 @@
 package advent2023.day14
 
-import advent2023.utils.*
-import advent2023.utils.WindDirection.*
+import lib.*
+import lib.WindDirection.*
 import java.io.File
 
 const val day = 14

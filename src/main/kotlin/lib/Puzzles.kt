@@ -1,4 +1,4 @@
-package advent2023.utils
+package lib
 
 import kotlin.time.measureTime
 

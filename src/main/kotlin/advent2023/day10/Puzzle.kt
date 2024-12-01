@@ -1,7 +1,7 @@
 package advent2023.day10
 
-import advent2023.utils.*
-import advent2023.utils.Direction.*
+import lib.*
+import lib.Direction.*
 import java.io.File
 
 const val day = 10

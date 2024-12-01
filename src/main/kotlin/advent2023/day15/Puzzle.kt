@@ -1,6 +1,6 @@
 package advent2023.day15
 
-import advent2023.utils.runPuzzle
+import lib.runPuzzle
 import java.io.File
 
 const val day = 15

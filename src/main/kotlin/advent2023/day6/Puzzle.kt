@@ -1,8 +1,8 @@
 package advent2023.day6
 
-import advent2023.utils.product
-import advent2023.utils.runPuzzle
-import advent2023.utils.solveQuadraticEquation
+import lib.product
+import lib.runPuzzle
+import lib.solveQuadraticEquation
 import java.io.File
 import kotlin.math.roundToInt
 

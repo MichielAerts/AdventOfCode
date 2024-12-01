@@ -1,7 +1,7 @@
 package advent2023.day20
 
-import advent2023.utils.lcm
-import advent2023.utils.runPuzzle
+import lib.lcm
+import lib.runPuzzle
 import java.io.File
 
 const val day = 20

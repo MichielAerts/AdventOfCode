@@ -1,8 +1,8 @@
 package advent2023.day25
 
-import advent2023.utils.mapToPair
-import advent2023.utils.product
-import advent2023.utils.runPuzzle
+import lib.mapToPair
+import lib.product
+import lib.runPuzzle
 import org.jgrapht.alg.connectivity.ConnectivityInspector
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath
 import org.jgrapht.graph.DefaultEdge

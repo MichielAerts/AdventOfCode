@@ -1,6 +1,6 @@
 package advent2023.day11
 
-import advent2023.utils.*
+import lib.*
 import org.paukov.combinatorics3.Generator
 import java.io.File
 

@@ -1,6 +1,6 @@
 package advent2023.day7
 
-import advent2023.utils.runPuzzle
+import lib.runPuzzle
 import org.paukov.combinatorics3.Generator
 import java.io.File
 

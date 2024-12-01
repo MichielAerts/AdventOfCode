@@ -1,8 +1,8 @@
 package advent2023.day2
 
-import advent2023.utils.findGroupAsInt
-import advent2023.utils.findOptionalGroupAsInt
-import advent2023.utils.runPuzzle
+import lib.findGroupAsInt
+import lib.findOptionalGroupAsInt
+import lib.runPuzzle
 import java.io.File
 
 const val day = 2

@@ -1,9 +1,9 @@
 package advent2023.day19
 
-import advent2023.utils.mapToPair
-import advent2023.utils.product
-import advent2023.utils.runPuzzle
-import advent2023.utils.splitBy
+import lib.mapToPair
+import lib.product
+import lib.runPuzzle
+import lib.splitBy
 import java.io.File
 
 const val day = 19

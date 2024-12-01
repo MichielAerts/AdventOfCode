@@ -1,6 +1,6 @@
 package advent2023.day18
 
-import advent2023.utils.*
+import lib.*
 import java.io.File
 import kotlin.math.absoluteValue
 

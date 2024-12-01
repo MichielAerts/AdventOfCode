@@ -1,6 +1,6 @@
 package advent2023.day23
 
-import advent2023.utils.*
+import lib.*
 import org.jgrapht.graph.DefaultEdge
 import org.jgrapht.graph.SimpleDirectedGraph
 import org.jgrapht.graph.SimpleDirectedWeightedGraph
