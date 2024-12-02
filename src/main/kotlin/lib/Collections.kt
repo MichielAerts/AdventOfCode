@@ -64,6 +64,8 @@ fun IntRange.hasOverlap(o: IntRange): Boolean {
     return this.intersect(o).isNotEmpty()
 }
 
+fun <E> List<E>.withoutItemAt(idx: Int) = filterIndexed { i, _ -> i != idx }
+
 fun <E> List<List<E>>.transpose(): List<List<E>> {
     val t = MutableList(this[0].size) { MutableList(this.size) { this[0][0] } }
 
