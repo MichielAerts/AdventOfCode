@@ -15,7 +15,7 @@ class Puzzle(private val input: List<String>) {
             endY = bricks.maxOf { it.end.y },
             endZ = bricks.maxOf { it.end.z }
         )
-        space.changePoints3D(space.allPoints().filter { it.z == 0 }.toSet(), '#')
+        space.changePoints3D(space.allPoints3D().filter { it.z == 0 }.toSet(), '#')
         
         for (brick in bricks) {
             val zValueObjectBelow = if (brick.isHorizontal()) {
@@ -37,7 +37,7 @@ class Puzzle(private val input: List<String>) {
             endY = bricks.maxOf { it.end.y },
             endZ = bricks.maxOf { it.end.z }
         )
-        space.changePoints3D(space.allPoints().filter { it.z == 0 }.toSet(), '#')
+        space.changePoints3D(space.allPoints3D().filter { it.z == 0 }.toSet(), '#')
 
         for (brick in bricks) {
             val zValueObjectBelow = if (brick.isHorizontal()) {

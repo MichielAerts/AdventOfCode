@@ -1,5 +1,6 @@
 package lib
 
+import lib.WindDirection.*
 import kotlin.math.absoluteValue
 import kotlin.math.max
 import kotlin.math.min
@@ -30,7 +31,9 @@ fun List<List<List<Point>>>.changePoint3D(pointToBeChanged: Point, c: Char) {
     this.getPoint(pointToBeChanged.x, pointToBeChanged.y, pointToBeChanged.z)?.value = c
 }
 
-fun List<List<List<Point>>>.allPoints(): List<Point> = flatten().flatten()
+fun List<List<List<Point>>>.allPoints3D(): List<Point> = flatten().flatten()
+
+fun List<List<Point>>.allPoints(): List<Point> = flatten()
 
 fun List<List<Point>>.changePoints(points: Set<Point>, c: Char) {
     for (pointToBeChanged in points) {
@@ -311,6 +314,22 @@ fun List<List<Point>>.getAdjacentNeighbours(p: Point): PointAndNeighbours {
     return PointAndNeighbours(p, potentialNeighbours.mapNotNull { this.getPoint(it.x, it.y) })
 }
 
+fun List<List<Point>>.getThreeByThreeSquareAround(p: Point): List<List<Point>>? {
+    val positions = listOf(
+        Pos(p.x - 1, p.y - 1),
+        Pos(p.x, p.y - 1),
+        Pos(p.x + 1, p.y - 1),
+        Pos(p.x - 1, p.y),
+        Pos(p.x, p.y),
+        Pos(p.x + 1, p.y),
+        Pos(p.x - 1, p.y + 1),
+        Pos(p.x, p.y + 1),
+        Pos(p.x + 1, p.y + 1)
+    )
+    val points = positions.mapNotNull { this.getPoint(it.x, it.y) }
+    return if (points.size == 9) points.chunked(3) else null
+}
+
 fun List<List<List<Point>>>.getDirectNeighbours3D(p: Point): PointAndNeighbours {
     val potentialNeighbours =
         listOf(
@@ -321,7 +340,7 @@ fun List<List<List<Point>>>.getDirectNeighbours3D(p: Point): PointAndNeighbours 
     return PointAndNeighbours(p, potentialNeighbours.mapNotNull { this.getPoint(it.x, it.y, it.z) })
 }
 
-fun List<List<Point>>.getPoint(p: Point, direction: WindDirection) =
+fun List<List<Point>>.getPoint(p: Point, direction: WindDirection): Point? =
     this.getPoint(getSurroundingPositions(p).getValue(direction))
 
 fun List<List<Point>>.getSurroundingPoints(p: Point): Map<WindDirection, Point> {
@@ -333,14 +352,14 @@ private fun getSurroundingPositions(p: Point): Map<WindDirection, Pos> {
     val x = p.x
     val y = p.y
     return mapOf(
-        WindDirection.N to Pos(x, y - 1),
-        WindDirection.NE to Pos(x + 1, y - 1),
-        WindDirection.E to Pos(x + 1, y),
-        WindDirection.SE to Pos(x + 1, y + 1),
-        WindDirection.S to Pos(x, y + 1),
-        WindDirection.SW to Pos(x - 1, y + 1),
-        WindDirection.W to Pos(x - 1, y),
-        WindDirection.NW to Pos(x - 1, y - 1)
+        N to Pos(x, y - 1),
+        NE to Pos(x + 1, y - 1),
+        E to Pos(x + 1, y),
+        SE to Pos(x + 1, y + 1),
+        S to Pos(x, y + 1),
+        SW to Pos(x - 1, y + 1),
+        W to Pos(x - 1, y),
+        NW to Pos(x - 1, y - 1)
     )
 }
 
@@ -370,6 +389,9 @@ fun List<List<List<Point>>>.getPoint(x: Int, y: Int, z: Int): Point? {
 
 fun List<List<Point>>.getHighestRowContaining(c: Char): Int = this.indexOfLast { it.any { it.value == c } }
 
+fun Point.onEdge(xSize: Int, ySize: Int): Boolean =
+    x == 0 || y == 0 || x == (xSize - 1) || y == (ySize - 1)
+
 fun Pair<Point, Point>.getXRange(): IntRange =
     min(first.x, second.x) .. max(first.x, second.x)
 
@@ -378,8 +400,45 @@ fun Pair<Point, Point>.getYRange(): IntRange =
 
 fun List<List<Point>>.getRow(y: Int): List<Point> = this[y]
 
+fun List<List<Point>>.getRows(): List<List<Point>> = this
+
 fun List<List<Point>>.getColumn(x: Int): List<Point> = this.map { it[x] }
 
+fun List<List<Point>>.allLinesInGrid(): List<List<Point>> = 
+    listOf(
+        getRows(), 
+        getRows().map { it.reversed() },
+        getColumns(), 
+        getColumns().map { it.reversed() },
+        getAllDiagonals()
+    ).flatten()
+
+fun List<List<Point>>.getAllDiagonals(): List<List<Point>> {
+    // all points on edge, create diagonals
+    val xSize = this[0].size
+    val ySize = this.size
+    return allPoints().filter { it.onEdge(xSize, ySize) }.flatMap { getAllDiagonalsFrom(it) }
+}
+
+fun List<List<Point>>.getAllDiagonalsFrom(point: Point): List<List<Point>> =
+    listOf(NE, NW, SE, SW).map { getDiagonalFrom(point, it) }
+        .filter { it.size > 1 }
+//        .onEach { println("diagonal from $point: ${it.map { it.value }.joinToString("")}") }
+
+fun List<List<Point>>.getDiagonalFrom(point: Point, direction: WindDirection): List<Point> {
+    val points = mutableListOf(point)
+    var currentPoint: Point? = point
+    while(currentPoint != null) {
+        currentPoint = getPoint(currentPoint, direction)
+        currentPoint?.let { points += currentPoint }
+    }
+    return points
+}
+
+fun List<List<Point>>.getAllThreeByThreeSquares(): List<List<List<Point>>> {
+    return allPoints().mapNotNull { getThreeByThreeSquareAround(it) }
+}
+        
 fun List<List<List<Point>>>.getPillar(x: Int, y: Int): List<Point> = this.map { it[y][x] }
 
 fun List<List<Point>>.getColumns(): List<List<Point>> = this.transpose()
@@ -387,6 +446,8 @@ fun List<List<Point>>.getColumns(): List<List<Point>> = this.transpose()
 fun List<List<Point>>.printZ() = this.forEach { println(it.map { it.z }.joinToString("")) }
 
 fun List<List<Point>>.printV() = this.forEach { println(it.map { it.value }.joinToString("")) }
+
+fun List<Point>.valuesAsString() = this.map { it.value }.joinToString(separator = "")
 
 fun List<List<List<Point>>>.printV3D() = this.forEach {
     it.forEach {
