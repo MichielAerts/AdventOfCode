@@ -10,62 +10,46 @@ val file = File("src/main/resources/advent2024/day${day}/input")
 class Puzzle(private val input: List<String>) {
     fun runPart1() {
         val equations = input.map { Equation.toEquation(it) }
-        println(equations.filter { it.canBeMadeTrue() }.sumOf { it.result })
+        val operations = listOf<(Long, Long) -> Long>(
+            { acc, e -> acc + e },
+            { acc, e -> acc * e },
+        )
+        println(equations.filter { it.canBeMadeTrue(operations) }.sumOf { it.result })
     }
 
     fun runPart2() {
         val equations = input.map { Equation.toEquation(it) }
-        println(equations.filter { it.canBeMadeTrueWithConcat() }.sumOf { it.result })
+        val operations = listOf<(Long, Long) -> Long>(
+            { acc, e -> acc + e },
+            { acc, e -> acc * e },
+            { acc, e -> "$acc$e".toLong() }
+        )
+        println(equations.filter { it.canBeMadeTrue(operations) }.sumOf { it.result })
+
     }
 }
 
 data class Equation(val result: Long, val numbers: List<Long>) {
 
-    fun canBeMadeTrueWithConcat(): Boolean {
-        val combinations = BigInteger.valueOf(3).pow(numbers.size - 1).toInt()
+    fun canBeMadeTrue(operations: List<(Long, Long) -> Long>): Boolean {
+        val numberOfOperations = operations.size
+        val combinations = BigInteger.valueOf(numberOfOperations.toLong()).pow(numbers.size - 1).toInt()
         var currentResult = 0L
-        for (i in 0..< combinations) {
-            val currentCombination = i.toString(3).padStart(numbers.size - 1, '0')
+        for (i in 0..<combinations) {
+            val currentCombination = i.toString(numberOfOperations).padStart(numbers.size - 1, '0')
             var currentNumber = numbers.first()
             currentResult = currentNumber
             for (idx in currentCombination.indices) {
                 val nextNumber = numbers[idx + 1]
-                currentResult = when(currentCombination[idx]) {
-                    '0' -> currentResult + nextNumber
-                    '1' -> currentResult * nextNumber
-                    '2' -> "$currentResult$nextNumber".toLong()
-                    else -> throw UnsupportedOperationException()
-                }
+                currentResult = operations[currentCombination[idx].digitToInt()](currentResult, nextNumber)
             }
-//            println("using $currentCombination got $currentResult for $numbers")
             if (currentResult == result) return true
         }
         return false
     }
 
-    fun canBeMadeTrue(): Boolean {
-        val combinations = BigInteger.valueOf(2).pow(numbers.size - 1).toInt()
-        var currentResult = 0L
-        for (i in 0..< combinations) {
-            val currentCombination = Integer.toBinaryString(i).padStart(numbers.size - 1, '0')
-            var currentNumber = numbers.first()
-            currentResult = currentNumber
-            for (idx in currentCombination.indices) {
-                val nextNumber = numbers[idx + 1]
-                currentResult = when(currentCombination[idx]) {
-                    '0' -> currentResult + nextNumber
-                    '1' -> currentResult * nextNumber
-                    else -> throw UnsupportedOperationException()
-                }
-            }
-//            println("using $currentCombination got $currentResult for $numbers")
-            if (currentResult == result) return true
-        }
-        return false
-    }
-    
     companion object {
-        
+
         fun toEquation(input: String): Equation {
             //21037: 9 7 18 13
             val (result, numbers) = input.split(": ")
