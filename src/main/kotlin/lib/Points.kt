@@ -244,8 +244,11 @@ open class Point(val x: Int, val y: Int, var z: Int = 0, var value: Char = '.') 
 data class Distance(val dx: Int, val dy: Int, val dz: Int) {
     operator fun minus(other: Distance): Distance = Distance(dx - other.dx, dy - other.dy, dz - other.dz)
     operator fun plus(other: Distance): Distance = Distance(dx + other.dx, dy + other.dy, dz + other.dz)
+    operator fun div(factor: Int): Distance = Distance(dx / factor, dy / factor, dz / factor)
     fun getManhattanDistance(other: Distance): Int =
         (dx - other.dx).absoluteValue + (dy - other.dy).absoluteValue + (dz - other.dz).absoluteValue
+
+    fun negate(): Distance = Distance(-dx, -dy, -dz)
 }
 
 data class Pos(val x: Int, val y: Int) {
@@ -370,6 +373,8 @@ fun List<List<Point>>.getPoint(x: Int, y: Int): Point? {
     if (x < 0 || x > (this[0].size - 1) || y < 0 || y > (this.size - 1)) return null
     return this[y][x]
 }
+fun List<List<Point>>.getPointFrom(point: Point, distance: Distance): Point? = 
+    getPoint(point.x + distance.dx, point.y + distance.dy)
 
 fun List<List<Point>>.getPoint(pos: Pos): Point? = getPoint(pos.x, pos.y)
 fun List<List<Point>>.getPointAfterMoveSure(current: Point, direction: Direction): Point = 

@@ -77,6 +77,20 @@ fun <E> List<List<E>>.transpose(): List<List<E>> {
     return t
 }
 
+fun <E> List<E>.allPairs(): List<Pair<E, E>> {
+    val pairs = mutableListOf<Pair<E, E>>()
+    return if (size < 2) {
+        return pairs
+    } else {
+        for (i in 0..<size) {
+            for (j in (i + 1)..<size) {
+                pairs += Pair(this[i], this[j])
+            }
+        }
+        pairs
+    }
+}
+
 fun List<List<Char>>.countAllOccurrences(c: Char): Int = joinToString("") { it.joinToString("") }.count { it == c }
 fun List<Char>.countOccurrences(c: Char): Int = joinToString("").count { it == c }
 fun List<Char>.hasAllDifferentCharacters(): Boolean = this.size == this.toSet().size
