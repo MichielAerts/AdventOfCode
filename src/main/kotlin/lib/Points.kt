@@ -88,6 +88,17 @@ enum class WindDirection {
             else -> throw IllegalArgumentException()
         }
     }
+    
+    fun opposite(): WindDirection = when(this) {
+        N -> S
+        NE -> SW
+        E -> W
+        SE -> NW
+        S -> N
+        SW -> NE
+        W -> E
+        NW -> SE
+    }
 }
 
 
@@ -172,6 +183,10 @@ open class Point(val x: Int, val y: Int, var z: Int = 0, var value: Char = '.') 
         return result
     }
 
+    fun touchesDirectly(o: Point): Boolean =
+        (x == o.x && (y - o.y).absoluteValue == 1) ||
+                (y == o.y && (x - o.x).absoluteValue == 1)
+        
     operator fun plus(d: Distance): Point = Point(x + d.dx, y + d.dy, z + d.dz)
     operator fun component1(): Int = x
     operator fun component2(): Int = y
@@ -349,6 +364,17 @@ fun List<List<Point>>.getPoint(p: Point, direction: WindDirection): Point? =
 fun List<List<Point>>.getSurroundingPoints(p: Point): Map<WindDirection, Point> {
     val points = getSurroundingPositions(p)
     return points.map { it.key to this.getPoint(it.value)!! }.toMap()
+}
+
+fun Set<Point>.hasPointInDirection(p: Point, dir: WindDirection): Boolean {
+    val expectedPos = when(dir) {
+        N -> Pos(p.x, p.y - 1)
+        E -> Pos(p.x + 1, p.y)
+        S -> Pos(p.x, p.y + 1)
+        W -> Pos(p.x - 1, p.y)
+        else -> throw UnsupportedOperationException()
+    }
+    return any { it.x == expectedPos.x && it.y == expectedPos.y }
 }
 
 private fun getSurroundingPositions(p: Point): Map<WindDirection, Pos> {
