@@ -1,5 +1,6 @@
 package lib
 
+import lib.Direction.*
 import lib.WindDirection.*
 import kotlin.math.absoluteValue
 import kotlin.math.max
@@ -199,10 +200,10 @@ open class Point(val x: Int, val y: Int, var z: Int = 0, var value: Char = '.') 
     )
 
     fun getView(direction: Direction, grid: List<List<Point>>): List<Point> = when(direction) {
-        Direction.UP -> grid.getColumn(x).subList(0, y).reversed()
-        Direction.DOWN -> grid.getColumn(x).subListTillEnd(y + 1)
-        Direction.RIGHT -> grid.getRow(y).subListTillEnd(x + 1)
-        Direction.LEFT -> grid.getRow(y).subList(0, x).reversed()
+        UP -> grid.getColumn(x).subList(0, y).reversed()
+        DOWN -> grid.getColumn(x).subListTillEnd(y + 1)
+        RIGHT -> grid.getRow(y).subListTillEnd(x + 1)
+        LEFT -> grid.getRow(y).subList(0, x).reversed()
     }
 
     fun getPointsInLineTo(end: Point): List<Point> = when {
@@ -256,6 +257,7 @@ open class Point(val x: Int, val y: Int, var z: Int = 0, var value: Char = '.') 
         otherFourPoints.size == 4 && (otherFourPoints.all { it.x == this.x } || otherFourPoints.all { it.y == this.y })
 }
 
+
 data class Distance(val dx: Int, val dy: Int, val dz: Int) {
     operator fun minus(other: Distance): Distance = Distance(dx - other.dx, dy - other.dy, dz - other.dz)
     operator fun plus(other: Distance): Distance = Distance(dx + other.dx, dy + other.dy, dz + other.dz)
@@ -286,10 +288,10 @@ data class Pos(val x: Int, val y: Int) {
 }
 
 fun Pos.getNextPos(d: Direction, amount: Int = 1): Pos = when (d) {
-    Direction.UP -> Pos(this.x, this.y - amount)
-    Direction.DOWN -> Pos(this.x, this.y + amount)
-    Direction.RIGHT -> Pos(this.x + amount, this.y)
-    Direction.LEFT -> Pos(this.x - amount, this.y)
+    UP -> Pos(this.x, this.y - amount)
+    DOWN -> Pos(this.x, this.y + amount)
+    RIGHT -> Pos(this.x + amount, this.y)
+    LEFT -> Pos(this.x - amount, this.y)
 }
 
 fun List<List<Point>>.getDirectNeighbours(p: Point): PointAndNeighbours {
@@ -299,10 +301,10 @@ fun List<List<Point>>.getDirectNeighbours(p: Point): PointAndNeighbours {
 
 fun List<List<Point>>.getNeighboursAndDirection(p: Point): Map<Direction, Point> {
     val potentialNeighbours = mapOf(
-        Direction.UP to Pos(p.x, p.y - 1),
-        Direction.RIGHT to Pos(p.x + 1, p.y),
-        Direction.DOWN to Pos(p.x, p.y + 1),
-        Direction.LEFT to Pos(p.x - 1, p.y)
+        UP to Pos(p.x, p.y - 1),
+        RIGHT to Pos(p.x + 1, p.y),
+        DOWN to Pos(p.x, p.y + 1),
+        LEFT to Pos(p.x - 1, p.y)
     )
     return potentialNeighbours
         .filter { this.getPoint(it.value.x, it.value.y) != null }
@@ -311,10 +313,10 @@ fun List<List<Point>>.getNeighboursAndDirection(p: Point): Map<Direction, Point>
 
 fun Point.findDirectionOfThisTo(o: Point) =
     when {
-        (this.x == o.x && this.y - o.y == 1) -> Direction.DOWN
-        (this.x == o.x && o.y - this.y == 1) -> Direction.UP
-        (this.y == o.y && this.x - o.x == 1) -> Direction.RIGHT
-        (this.y == o.y && o.x - this.x == 1) -> Direction.LEFT
+        (this.x == o.x && this.y - o.y == 1) -> DOWN
+        (this.x == o.x && o.y - this.y == 1) -> UP
+        (this.y == o.y && this.x - o.x == 1) -> RIGHT
+        (this.y == o.y && o.x - this.x == 1) -> LEFT
         else -> throw IllegalStateException("not a direct neightbour")
     }
 
@@ -348,6 +350,8 @@ fun List<List<Point>>.getThreeByThreeSquareAround(p: Point): List<List<Point>>? 
     return if (points.size == 9) points.chunked(3) else null
 }
 
+fun Set<Point>.clone(): Set<Point> = this.map { it.copy() }.toSet()
+
 fun List<List<List<Point>>>.getDirectNeighbours3D(p: Point): PointAndNeighbours {
     val potentialNeighbours =
         listOf(
@@ -375,6 +379,17 @@ fun Set<Point>.hasPointInDirection(p: Point, dir: WindDirection): Boolean {
         else -> throw UnsupportedOperationException()
     }
     return any { it.x == expectedPos.x && it.y == expectedPos.y }
+}
+
+fun Set<Point>.getPointInDirection(p: Point, dir: Direction): Point? {
+    val expectedPos = when(dir) {
+        UP -> Pos(p.x, p.y - 1)
+        RIGHT -> Pos(p.x + 1, p.y)
+        DOWN -> Pos(p.x, p.y + 1)
+        LEFT -> Pos(p.x - 1, p.y)
+        else -> throw UnsupportedOperationException()
+    }
+    return find { it.x == expectedPos.x && it.y == expectedPos.y }
 }
 
 private fun getSurroundingPositions(p: Point): Map<WindDirection, Pos> {
@@ -407,10 +422,10 @@ fun List<List<Point>>.getPointAfterMoveSure(current: Point, direction: Direction
     getPointAfterMove(current, direction)!!
 
 fun List<List<Point>>.getPointAfterMove(current: Point, direction: Direction, times: Int = 1): Point? = when(direction) {
-    Direction.UP -> this.getPoint(current.x, current.y - times)
-    Direction.DOWN -> this.getPoint(current.x, current.y + times)
-    Direction.RIGHT -> this.getPoint(current.x + times, current.y)
-    Direction.LEFT -> this.getPoint(current.x - times, current.y)
+    UP -> this.getPoint(current.x, current.y - times)
+    DOWN -> this.getPoint(current.x, current.y + times)
+    RIGHT -> this.getPoint(current.x + times, current.y)
+    LEFT -> this.getPoint(current.x - times, current.y)
 }
 
 fun List<List<List<Point>>>.getPoint(x: Int, y: Int, z: Int): Point? {
