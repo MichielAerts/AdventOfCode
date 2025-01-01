@@ -137,6 +137,9 @@ enum class Direction {
                 else -> throw IllegalArgumentException("No")
             }
         }
+        
+        fun all(): List<Direction> =
+            listOf(UP, RIGHT, DOWN, LEFT)
     }
 }
 
@@ -156,6 +159,8 @@ open class Point(val x: Int, val y: Int, var z: Int = 0, var value: Char = '.') 
         return newP
     }
 
+    fun pos(): Pos = Pos(x, y)
+    
     fun getDistanceTo(other: Point): Distance = Distance(other.x - x, other.y - y, other.z - z)
 
     fun getDistanceToAll(others: List<Point>): List<Distance> = others.map { Distance(it.x - x, it.y - y, it.z - z) }
@@ -369,6 +374,9 @@ fun List<List<Point>>.getSurroundingPoints(p: Point): Map<WindDirection, Point> 
     val points = getSurroundingPositions(p)
     return points.map { it.key to this.getPoint(it.value)!! }.toMap()
 }
+
+fun List<List<Point>>.getXPointsInDirection(p: Point, direction: Direction, number: Int): List<Point> =
+    (1..number).map { p.pos().getNextPos(direction, it) }.mapNotNull { getPoint(it) }.toList()
 
 fun Set<Point>.hasPointInDirection(p: Point, dir: WindDirection): Boolean {
     val expectedPos = when(dir) {
