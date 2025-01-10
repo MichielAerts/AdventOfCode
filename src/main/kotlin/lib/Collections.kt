@@ -1,5 +1,7 @@
 package lib
 
+import org.paukov.combinatorics3.Generator
+
 fun <E> List<E>.subListTillEnd(fromIndex: Int): List<E> = this.subList(fromIndex, this.size)
 fun List<Int>.product(): Int = this.reduce { acc, i -> acc * i }
 fun List<Long>.product(): Long = this.reduce { acc, i -> acc * i }
@@ -16,6 +18,16 @@ inline fun <T> Iterable<T>.takeWhileInclusive(
         result
     }
 }
+
+fun cartesianProduct(a: List<String>, b: List<String>, vararg others: List<String>): List<List<String>> =
+    (listOf(a, b).plus(others))
+        .fold(listOf(listOf<String>())) { acc, set ->
+            acc.flatMap { list -> set.map { element -> list + element } }
+        }
+        .toList()
+
+fun <E> List<E>.allPermutations(): List<List<E>> =
+    Generator.permutation(this).simple().stream().toList()
 
 fun <E> List<E>?.subList(fromIndex: Int): List<E>? = this?.subList(fromIndex, this.size)
 fun <T> List<T>.toPair(): Pair<T, T> {
