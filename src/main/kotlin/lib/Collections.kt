@@ -26,6 +26,13 @@ fun cartesianProduct(a: List<String>, b: List<String>, vararg others: List<Strin
         }
         .toList()
 
+fun <E> cartesianProduct2(a: List<E>, b: List<E>, vararg others: List<E>): List<List<E>> =
+    (listOf(a, b).plus(others))
+        .fold(listOf(listOf<E>())) { acc, set ->
+            acc.flatMap { list -> set.map { element -> list + element } }
+        }
+        .toList()
+
 fun <E> List<E>.allPermutations(): List<List<E>> =
     Generator.permutation(this).simple().stream().toList()
 
