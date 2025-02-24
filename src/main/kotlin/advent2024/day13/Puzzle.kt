@@ -1,6 +1,6 @@
 package advent2024.day13
 
-import lib.findGroupAsLong
+import lib.groupAsLong
 import lib.runPuzzle
 import lib.splitBy
 import java.io.File
@@ -52,18 +52,18 @@ data class Machine(val a: Button, val b: Button, val prize: Prize) {
             val (a, b, p) = input
 
             return Machine(
-                a = Button(buttonRegex.findGroupAsLong(a, "x"), buttonRegex.findGroupAsLong(a, "y"), 3),
-                b = Button(buttonRegex.findGroupAsLong(b, "x"), buttonRegex.findGroupAsLong(b, "y"), 1),
-                prize = Prize(prizeRegex.findGroupAsLong(p, "x"), prizeRegex.findGroupAsLong(p, "y"))
+                a = Button(buttonRegex.groupAsLong(a, "x"), buttonRegex.groupAsLong(a, "y"), 3),
+                b = Button(buttonRegex.groupAsLong(b, "x"), buttonRegex.groupAsLong(b, "y"), 1),
+                prize = Prize(prizeRegex.groupAsLong(p, "x"), prizeRegex.groupAsLong(p, "y"))
             )
         }
         fun toMachineWithCorrectPrizePosition(input: List<String>): Machine {
             val (a, b, p) = input
 
             return Machine(
-                a = Button(buttonRegex.findGroupAsLong(a, "x").toLong(), buttonRegex.findGroupAsLong(a, "y").toLong(), 3),
-                b = Button(buttonRegex.findGroupAsLong(b, "x").toLong(), buttonRegex.findGroupAsLong(b, "y").toLong(), 1),
-                prize = Prize(prizeRegex.findGroupAsLong(p, "x") + 10000000000000L, prizeRegex.findGroupAsLong(p, "y") + 10000000000000L)
+                a = Button(buttonRegex.groupAsLong(a, "x").toLong(), buttonRegex.groupAsLong(a, "y").toLong(), 3),
+                b = Button(buttonRegex.groupAsLong(b, "x").toLong(), buttonRegex.groupAsLong(b, "y").toLong(), 1),
+                prize = Prize(prizeRegex.groupAsLong(p, "x") + 10000000000000L, prizeRegex.groupAsLong(p, "y") + 10000000000000L)
             )
         }
     }

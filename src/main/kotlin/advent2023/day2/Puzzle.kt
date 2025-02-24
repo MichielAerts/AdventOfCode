@@ -1,7 +1,7 @@
 package advent2023.day2
 
-import lib.findGroupAsInt
-import lib.findOptionalGroupAsInt
+import lib.groupAsInt
+import lib.optionalGroupAsInt
 import lib.runPuzzle
 import java.io.File
 
@@ -42,7 +42,7 @@ data class Game(val no: Int, val sets: List<Set>) {
         // Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green
         fun createGame(input: String): Game {
             val (game, setsLine) = input.split(":")
-            val no = gameRegex.findGroupAsInt(game, "no")
+            val no = gameRegex.groupAsInt(game, "no")
             val sets = setsLine.split(";")
                 .map { Set.createSet(it) }
             return Game(no, sets)
@@ -60,9 +60,9 @@ data class Set(val blues: Int = 0, val reds: Int = 0, val greens: Int = 0) {
         private val redRegex = Regex("(?<no>\\d+) red")
         private val greenRegex = Regex("(?<no>\\d+) green")
         fun createSet(input: String): Set {
-            val blues = blueRegex.findOptionalGroupAsInt(input, "no") ?: 0
-            val reds = redRegex.findOptionalGroupAsInt(input, "no") ?: 0
-            val greens = greenRegex.findOptionalGroupAsInt(input, "no") ?: 0
+            val blues = blueRegex.optionalGroupAsInt(input, "no") ?: 0
+            val reds = redRegex.optionalGroupAsInt(input, "no") ?: 0
+            val greens = greenRegex.optionalGroupAsInt(input, "no") ?: 0
             return Set(blues, reds, greens)
         }
     }

@@ -36,6 +36,9 @@ fun <E> cartesianProduct2(a: List<E>, b: List<E>, vararg others: List<E>): List<
 fun <E> List<E>.allPermutations(): List<List<E>> =
     Generator.permutation(this).simple().stream().toList()
 
+fun <E> List<E>.combinations(elements: Int): List<List<E>> =
+    Generator.combination(this).simple(elements).stream().toList()
+
 fun <E> List<E>?.subList(fromIndex: Int): List<E>? = this?.subList(fromIndex, this.size)
 fun <T> List<T>.toPair(): Pair<T, T> {
     if (this.size != 2) {

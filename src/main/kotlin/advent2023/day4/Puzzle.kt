@@ -1,6 +1,6 @@
 package advent2023.day4
 
-import lib.findGroupAsInt
+import lib.groupAsInt
 import lib.runPuzzle
 import java.io.File
 import kotlin.math.pow
@@ -45,7 +45,7 @@ data class Card(val number: Int, val winningNumbers: List<Int>, val ownNumbers: 
         //Card 1: 41 48 83 86 17 | 83 86  6 31 17  9 48 53
         fun createCard(input: String): Card {
             val (cardInput, numbersInput) = input.split(":")
-            val no = cardRegex.findGroupAsInt(cardInput, "no")
+            val no = cardRegex.groupAsInt(cardInput, "no")
             val (winningNumbers, ownNumbers) = numbersInput.split("|").map { it.trim().split("\\s+".toRegex()).map { it.toInt() } }
             return Card(no, winningNumbers, ownNumbers)
         }

@@ -1,18 +1,26 @@
 package lib
 
-fun Regex.findGroupAsLong(str: String, group: String): Long =
+fun Regex.groupAsLong(str: String, group: String): Long =
     find(str)?.groups?.get(group)?.value?.toLong() ?: throw IllegalArgumentException("couldn't")
 
-fun Regex.findGroupAsInt(str: String, group: String): Int =
+fun Regex.groupAsInt(str: String, group: String): Int =
     find(str)?.groups?.get(group)?.value?.toInt() ?: throw IllegalArgumentException("couldn't")
 
-fun Regex.findOptionalGroupAsInt(str: String, group: String): Int? =
+fun Regex.optionalGroupAsInt(str: String, group: String): Int? =
     find(str)?.groups?.get(group)?.value?.toInt()
 
-fun Regex.findGroupAsString(str: String, group: String): String =
+fun Regex.groupAsString(str: String, group: String): String =
     find(str)?.groups?.get(group)?.value ?: throw IllegalArgumentException("couldn't")
 
-inline fun <reified T : Enum<T>> Regex.findGroupAsEnum(str: String, group: String): T =
+fun Regex.group(str: String, group: String): String =
+    groupAsString(str, group)
+
+val alphabet = listOf(
+    'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
+    'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
+)
+
+inline fun <reified T : Enum<T>> Regex.groupAsEnum(str: String, group: String): T =
     enumValueOf(find(str)?.groups?.get(group)?.value?.uppercase() ?: throw IllegalArgumentException("couldn't"))
 
 operator fun Regex.contains(text: CharSequence): Boolean = this.matches(text)

@@ -1,6 +1,6 @@
 package advent2024.day14
 
-import lib.findGroupAsInt
+import lib.groupAsInt
 import lib.product
 import lib.runPuzzle
 import java.io.File
@@ -93,8 +93,8 @@ data class Robot(val p0: Position, val v: Velocity, var p: Position = p0) {
             //p=9,5 v=-3,-3
             val (p, v) = input.split(" ")
             return Robot(
-                p0 = Position(regex.findGroupAsInt(p, "x"), regex.findGroupAsInt(p, "y")),
-                v = Velocity(regex.findGroupAsInt(v, "x"), regex.findGroupAsInt(v, "y"))
+                p0 = Position(regex.groupAsInt(p, "x"), regex.groupAsInt(p, "y")),
+                v = Velocity(regex.groupAsInt(v, "x"), regex.groupAsInt(v, "y"))
             )
         }
     }

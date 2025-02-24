@@ -1,5 +1,6 @@
 package lib
 
+import org.apache.commons.math3.util.ArithmeticUtils.gcd
 import kotlin.math.sqrt
 
 fun solveQuadraticEquation(a: Double, b: Double, c: Double): Pair<Double, Double>? {
@@ -21,6 +22,34 @@ fun Int.isEven(): Boolean =
 
 private fun lcm(a: Long, b: Long): Long {
     return a * (b / gcd(a, b))
+}
+
+fun <T> List<T>.allSublists(): List<List<T>> = when {
+    isEmpty() -> listOf(listOf())
+    else -> drop(1).allSublists().let { it + it.map { it + first() } }
+}
+
+fun <T> Collection<T>.powerset(): Set<Set<T>> = when {
+    isEmpty() -> setOf(setOf())
+    else -> drop(1).powerset().let { it + it.map { it + first() } }
+}
+
+fun <T> allPermutations(input: Set<T>): Set<List<T>> {
+    if (input.isEmpty()) return emptySet()
+    
+    fun <T> _allPermutations(list: List<T>): Set<List<T>> {
+        if (list.isEmpty()) return setOf(emptyList())
+        
+        val result = mutableSetOf<List<T>>()
+        for (i in list.indices) {
+            _allPermutations(list - list[i]).forEach {
+                item -> result.add(item + list[i])
+            }
+        }
+        return result
+    }
+    
+    return _allPermutations(input.toList())
 }
 
 fun lcm(input: LongArray): Long {

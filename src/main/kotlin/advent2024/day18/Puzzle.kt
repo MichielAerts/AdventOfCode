@@ -57,7 +57,7 @@ data class Byte(val x: Int, val y: Int) {
     companion object {
         val regex = "(?<x>\\d+),(?<y>\\d+)".toRegex()
         fun createByte(input: String): Byte =
-            Byte(regex.findGroupAsInt(input, "x"), regex.findGroupAsInt(input, "y"))
+            Byte(regex.groupAsInt(input, "x"), regex.groupAsInt(input, "y"))
     }
 }
 

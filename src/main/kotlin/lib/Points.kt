@@ -14,8 +14,8 @@ fun List<String>.to2DGridOfPointsWithValues(): List<List<Point>> = this.mapIndex
     r.toList().mapIndexed { x, v -> Point(x, y, value = v) }
 }
 
-fun initEmptyGrid(startX: Int = 0, endX: Int, startY: Int = 0, endY: Int): List<List<Point>> =
-    (startY..endY).map { y -> (startX..endX).map { Point(it, y) } }
+fun initEmptyGrid(startX: Int = 0, endX: Int, startY: Int = 0, endY: Int, value: Char = '.'): List<List<Point>> =
+    (startY..endY).map { y -> (startX..endX).map { Point(it, y, value = value) } }
 
 fun initEmpty3DGrid(startX: Int = 0, endX: Int, startY: Int = 0, endY: Int, startZ: Int = 0, endZ: Int): List<List<List<Point>>> =
     (startZ..endZ).map { z -> (startY..endY).map { y -> (startX..endX).map { x -> Point(x, y, z) } } }
@@ -489,6 +489,12 @@ fun List<List<Point>>.getDiagonalFrom(point: Point, direction: WindDirection): L
     return points
 }
 
+fun List<List<Point>>.isCorner(p: Point): Boolean =
+    (p.x == 0 && p.y == 0) ||
+            (p.x == this[0].size - 1 && p.y == 0) ||
+            (p.x == 0 && p.y == this.size - 1) ||
+            (p.x == this[0].size - 1 && p.y == this.size - 1)
+
 fun List<List<Point>>.getAllThreeByThreeSquares(): List<List<List<Point>>> {
     return allPoints().mapNotNull { getThreeByThreeSquareAround(it) }
 }
@@ -499,7 +505,7 @@ fun List<List<Point>>.getColumns(): List<List<Point>> = this.transpose()
 
 fun List<List<Point>>.printZ() = this.forEach { println(it.map { it.z }.joinToString("")) }
 
-fun List<List<Point>>.printV() = this.forEach { println(it.map { it.value }.joinToString("")) }
+fun List<List<Point>>.printV() = this.forEach { println(it.map { it.value }.joinToString("")) }.also { println() }
 
 fun List<Point>.valuesAsString() = this.map { it.value }.joinToString(separator = "")
 
