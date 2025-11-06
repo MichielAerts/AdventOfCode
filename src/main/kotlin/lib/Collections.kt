@@ -136,3 +136,6 @@ fun <K, V, R> Pair<Map<K, V>, Map<K, V>>.merge(merger: (V?, V?) -> R): Map<K, R>
     return (first.keys.asSequence() + second.keys.asSequence())
         .associateWith { merger(first[it], second[it]) }
 }
+
+fun <E> List<E>.rotate(number: Int): List<E> =
+    this.subListTillEnd(number) + this.subList(0, number)
