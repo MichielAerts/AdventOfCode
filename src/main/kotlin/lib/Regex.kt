@@ -18,6 +18,9 @@ fun Regex.group(str: String, group: String): String =
 fun String.ints(): List<Int> =
     Regex("\\d+").findAll(this).toList().map { it.value.toInt() }
 
+fun Regex.allGroups(input: String): List<String> =
+    this.matchEntire(input)?.groupValues!!.drop(1)
+
 val alphabet = listOf(
     'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
     'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
