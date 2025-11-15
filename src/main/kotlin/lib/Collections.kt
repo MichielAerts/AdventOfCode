@@ -8,6 +8,10 @@ fun List<Long>.product(): Long = this.reduce { acc, i -> acc * i }
 fun <E> List<E>.repeat(copyFactor: Int): List<E> =
     (1..< copyFactor).fold(this) { acc, _ -> acc + this}
 
+fun <E> List<E>.splitInThree(endIdxFirstPartExcl: Int, endIdxSecondPartExcl: Int,): Triple<List<E>, List<E>, List<E>> =
+    Triple(this.subList(0, endIdxFirstPartExcl).toList(), this.subList(endIdxFirstPartExcl, endIdxSecondPartExcl).toList(),this.subListTillEnd(endIdxSecondPartExcl).toList())
+
+
 operator fun <T> List<T>.component6() = this[5]
 
 inline fun <T> Iterable<T>.takeWhileInclusive(
