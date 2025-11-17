@@ -87,3 +87,6 @@ data class RegexM(val regex: CharArray, val etaTransitions: Map<Int, List<Int>>)
         }
     }
 }
+
+fun String.hexToBinary() =
+    this.toList().joinToString("") { it.toString().toInt(16).toString(2).padStart(4, '0') }

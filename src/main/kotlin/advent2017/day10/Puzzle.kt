@@ -23,28 +23,34 @@ class Puzzle(private val input: List<String>) {
     }
 
     fun runPart2() {
-        val lengths = input[0].toList().map { it.code } + listOf(17, 31, 73, 47, 23)
-        val rounds = 64
-
-        val list = (0..255).associateWith { it }.toMutableMap()
-        val listSize = list.size
-        var currentPosition = 0
-        var skipSize = 0
-        for (i in 1..rounds) {
-            for (length in lengths) {
-                val selectionIndices = (currentPosition..(currentPosition + length - 1)).map { it % listSize }
-                val reversedSelection = selectionIndices.map { list.getValue(it) }.reversed()
-                selectionIndices.forEachIndexed { index, selectionIndex ->
-                    list[selectionIndex] = reversedSelection[index]
-                }
-                currentPosition += length + skipSize++
-            }
-        }
-
-        val sparseHash = list.values.chunked(16) { it.sparseHash() }
-        val hex = sparseHash.joinToString(separator = "") { it.toHexString().takeLast(2) }
+        val input = input[0]
+        val hex = knotHash(input)
         println(hex)
     }
+}
+
+fun knotHash(input: String): String {
+    val lengths = input.toList().map { it.code } + listOf(17, 31, 73, 47, 23)
+    val rounds = 64
+
+    val list = (0..255).associateWith { it }.toMutableMap()
+    val listSize = list.size
+    var currentPosition = 0
+    var skipSize = 0
+    for (i in 1..rounds) {
+        for (length in lengths) {
+            val selectionIndices = (currentPosition..(currentPosition + length - 1)).map { it % listSize }
+            val reversedSelection = selectionIndices.map { list.getValue(it) }.reversed()
+            selectionIndices.forEachIndexed { index, selectionIndex ->
+                list[selectionIndex] = reversedSelection[index]
+            }
+            currentPosition += length + skipSize++
+        }
+    }
+
+    val sparseHash = list.values.chunked(16) { it.sparseHash() }
+    val hex = sparseHash.joinToString(separator = "") { it.toHexString().takeLast(2) }
+    return hex
 }
 
 private fun List<Int>.sparseHash(): Int =
