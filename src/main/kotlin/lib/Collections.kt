@@ -145,3 +145,21 @@ fun <K, V, R> Pair<Map<K, V>, Map<K, V>>.merge(merger: (V?, V?) -> R): Map<K, R>
 
 fun <E> List<E>.rotate(number: Int): List<E> =
     this.subListTillEnd(number) + this.subList(0, number)
+
+fun <K, V> MutableMap<K, V>.swapKeys(
+    firstKey: K,
+    secondKey: K
+): MutableMap<K, V> {
+    val first = this.getValue(firstKey)
+    val second = this.getValue(secondKey)
+    this[firstKey] = second
+    this[secondKey] = first
+    return this
+}
+
+
+private fun Map<Int, Char>.valuesAsString(): String =
+    values.joinToString("")
+
+fun <K, V> Map<K, V>.findEntryWithValue(value: V): Map.Entry<K, V> =
+    this.entries.first { it.value == value }
