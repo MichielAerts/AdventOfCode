@@ -12,6 +12,9 @@ fun <E> List<E>.splitInThree(endIdxFirstPartExcl: Int, endIdxSecondPartExcl: Int
     Triple(this.subList(0, endIdxFirstPartExcl).toList(), this.subList(endIdxFirstPartExcl, endIdxSecondPartExcl).toList(),this.subListTillEnd(endIdxSecondPartExcl).toList())
 
 
+fun <E> List<E>.splitAt(idx: Int): Pair<List<E>, List<E>> =
+    Pair(this.subList(0, idx).toList(), this.subListTillEnd(idx).toList())
+
 operator fun <T> List<T>.component6() = this[5]
 
 inline fun <T> Iterable<T>.takeWhileInclusive(

@@ -1,15 +1,12 @@
 package snippets
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.runBlocking
-import java.time.LocalDateTime
 
 @OptIn(ExperimentalCoroutinesApi::class)
 fun main(): Unit = runBlocking {
     //channel with multiple producers and multiple consumers
-    //channels send suspend when noone is receiving (except when under capacity)
+    //channels send suspend when no one is receiving (except when under capacity)
     //channels receive also suspends when channel is empty
     //rendezvous channel
 //    val channel = Channel<String>()
@@ -66,7 +63,7 @@ fun main(): Unit = runBlocking {
 //    launch { 
 //        sharedFlow.collect { println("collecting $it") }
 //    }
-//    
+//
 //    sharedFlow.emit("1")
 //    sharedFlow.emit("2")
 //    sharedFlow.emit("3")
@@ -91,29 +88,29 @@ fun main(): Unit = runBlocking {
 //        }
 //
 //    println("done")
-    
+//    
     //flattening flows
-    val flow1 = flow {
-        for (i in 1..10) {
-            emit("producing $i from 1")
-            delay(100)
-        }
-    }
-    val flow2 = flow {
-        for (i in 1..10) {
-            emit("producing $i from 2")
-            delay(100)
-        }
-    }
-    val combinedFlow = flowOf(flow1, flow2).flatMapMerge { it }
-
-    combinedFlow.buffer().map { "new value: $it at ${LocalDateTime.now()}" }
-//    flow.map { "new value: $it at ${LocalDateTime.now()}" }
-        .collect {
-            delay(100)
-            println(it)
-        }
-
-    println("done")
+//    val flow1 = flow {
+//        for (i in 1..10) {
+//            emit("producing $i from 1")
+//            delay(100)
+//        }
+//    }
+//    val flow2 = flow {
+//        for (i in 1..10) {
+//            emit("producing $i from 2")
+//            delay(100)
+//        }
+//    }
+//    val combinedFlow = flowOf(flow1, flow2).flatMapMerge { it }
+//
+//    combinedFlow.buffer().map { "new value: $it at ${LocalDateTime.now()}" }
+////    flow.map { "new value: $it at ${LocalDateTime.now()}" }
+//        .collect {
+//            delay(100)
+//            println(it)
+//        }
+//
+//    println("done")
 
 }
