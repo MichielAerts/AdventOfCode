@@ -14,6 +14,20 @@ fun solveQuadraticEquation(a: Double, b: Double, c: Double): Pair<Double, Double
     return Pair(root1, root2)
 }
 
+fun solveQuadraticEquationWithZeroA(a: Double, b: Double, c: Double): Pair<Double, Double>? {
+    if (a == 0.0) {
+        return Pair(-c / b, -c / b)
+    }
+    val discriminant = b * b - 4 * a * c
+    if (discriminant < 0) {
+        // No real roots
+        return null
+    }
+    val root1 = (-b + sqrt(discriminant)) / (2 * a)
+    val root2 = (-b - sqrt(discriminant)) / (2 * a)
+    return Pair(root1, root2)
+}
+
 fun Int.isUneven(): Boolean =
     this % 2 == 1
 
