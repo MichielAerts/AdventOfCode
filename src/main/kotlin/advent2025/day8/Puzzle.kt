@@ -3,9 +3,6 @@ package advent2025.day8
 import lib.product
 import lib.runPuzzle
 import lib.subListTillEnd
-import org.jgrapht.alg.connectivity.ConnectivityInspector
-import org.jgrapht.graph.DefaultEdge
-import org.jgrapht.graph.SimpleGraph
 import java.io.File
 import kotlin.math.pow
 import kotlin.math.sqrt
@@ -22,17 +19,13 @@ class Puzzle(private val input: List<String>) {
             }
             .associateByTo(sortedMapOf()) { it.first.distanceTo(it.second) }
         
-        val graph = SimpleGraph<JunctionBox, DefaultEdge>(DefaultEdge::class.java)
-        boxes.forEach { graph.addVertex(it) }
+        val network = Network()
+        boxes.forEach { network.add(it) }        
         val connect = 1000
         pairsByDistance.entries.take(connect).forEach { (distance, pair) ->
-            graph.addEdge(pair.first, pair.second)
+            network.connectPair(pair.first, pair.second)
         }
-
-        val scAlg = ConnectivityInspector(graph)
-        val stronglyConnectedSubgraphs = scAlg.connectedSets()
-
-        println(stronglyConnectedSubgraphs.sortedByDescending { it.size }.take(3).map{ it.size }.product())
+        println(network.connectedSets.sortedByDescending { it.size }.take(3).map { it.size }.product())
     }
 
     fun runPart2() {
@@ -44,20 +37,40 @@ class Puzzle(private val input: List<String>) {
             .associateByTo(sortedMapOf()) { it.first.distanceTo(it.second) }
         val pairs = pairsByDistance.values.toList()
 
-        val graph = SimpleGraph<JunctionBox, DefaultEdge>(DefaultEdge::class.java)
-        boxes.forEach { graph.addVertex(it) }
+        val network = Network()
+        boxes.forEach { network.add(it) }
         
-        var scAlg = ConnectivityInspector(graph)
+        var lastConnectedPair = pairs[0]
         var connectedPairs = 0
-        var lastConnectedPair = pairs.first()
-        while(!scAlg.isConnected) {
+        while(!network.isConnected()) {
             val pair = pairs[connectedPairs++]
-            graph.addEdge(pair.first, pair.second)
-            scAlg = ConnectivityInspector(graph)
+            network.connectPair(pair.first, pair.second)
             lastConnectedPair = pair
         }
         println("${lastConnectedPair.first.x.toLong() * lastConnectedPair.second.x}")
     }
+}
+
+data class Network(val connectedSets: MutableSet<MutableSet<JunctionBox>> = mutableSetOf()) {
+    fun add(junctionBox: JunctionBox) {
+        require(!connectedSets.flatten().contains(junctionBox))
+        connectedSets.add(mutableSetOf(junctionBox))
+    }
+
+    fun connectPair(first: JunctionBox, second: JunctionBox) {
+        if (connectedSets.any { first in it && second in it }) return
+        
+        val firstSet = connectedSets.first { first in it }
+        connectedSets.remove(firstSet)
+        
+        val secondSet = connectedSets.first { second in it }
+        connectedSets.remove(secondSet)
+        
+        val newSet = firstSet + secondSet
+        connectedSets.add(newSet.toMutableSet())
+    }
+    
+    fun isConnected() = connectedSets.size == 1
 }
 
 data class JunctionBox(val x: Int, val y: Int, val z: Int) {
