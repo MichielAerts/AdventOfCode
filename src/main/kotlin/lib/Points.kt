@@ -219,6 +219,9 @@ open class Point(val x: Int, val y: Int, var z: Int = 0, var value: Char = '.') 
         else -> throw IllegalArgumentException("shouldn't")
     }
 
+    fun getPointsInBetweenOf(end: Point): List<Point> = 
+        getPointsInLineTo(end) - listOf(this, end).toSet()
+
     fun getPointsInLineTo3D(end: Point): List<Point> = when {
         this.x != end.x -> (min(this.x, end.x)..max(this.x, end.x)).map { Point(it, this.y, this.z) }
         this.y != end.y -> (min(this.y, end.y)..max(this.y, end.y)).map { Point(this.x, it, this.z) }
