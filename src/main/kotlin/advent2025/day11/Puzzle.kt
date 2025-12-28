@@ -8,32 +8,41 @@ val file = File("src/main/resources/advent2025/day${day}/input")
 
 class Puzzle(private val input: List<String>) {
     fun runPart1() {
-        val devices = createDevices()
+        val devices = createDevices().topologicalSort().associateBy { it.name }
         val numberOfValidPaths = devices.findNumberOfPaths("you", "out")
         println(numberOfValidPaths)
     }
 
-    private fun Map<String, Long>.getAnyIntermediateEndOfPath(target: String): Map.Entry<String, Long>? =
-        this.entries.sortedBy { it.value }.firstOrNull { it.key != target && it.value > 0 }
-    
+    private fun Map<String, Device>.topologicalSort(): List<Device> {
+        val sortedList = mutableListOf<Device>()
+        val devices = this.values.toMutableList()
+        while (devices.isNotEmpty()) {
+            val outgoingEdges = devices.flatMap { it.outputs }
+            val start = devices.first { it !in outgoingEdges }
+            sortedList += start
+            devices.remove(start)
+        }
+        return sortedList
+    }
+
     private fun Map<String, Device>.findNumberOfPaths(
         start: String,
         target: String
     ): Long {
+        //assumes topological sort
         val map = this.keys.associateWith { 0L }.toMutableMap()
         map[start] = 1L
-        while (map.getAnyIntermediateEndOfPath(target) != null) {
-            val (currentEnd, amount) = map.getAnyIntermediateEndOfPath(target)!!
-            for (next in this.getValue(currentEnd).outputs) {
+        for ((name, amount) in map) {
+            if (name == target) return amount
+            for (next in this.getValue(name).outputs) {
                 map.merge(next.name, amount) { a, b -> a + b }
             }
-            map[currentEnd] = 0
         }
-        return map.getValue(target)
+        throw IllegalStateException("$target not encountered")
     }
 
     fun runPart2() {
-        val devices = createDevices()
+        val devices = createDevices().topologicalSort().associateBy { it.name }
         println(
             devices.findNumberOfPaths("svr", "fft") *
                     devices.findNumberOfPaths("fft", "dac") *
