@@ -28,6 +28,10 @@ fun List<List<Point>>.changePoint(pointToBeChanged: Point, c: Char) {
     this.getPoint(pointToBeChanged.x, pointToBeChanged.y)?.value = c
 }
 
+fun List<List<Point>>.changePoint(x: Int, y:Int, c: Char) {
+    this.getPoint(x, y)?.value = c
+}
+
 fun List<List<List<Point>>>.changePoint3D(pointToBeChanged: Point, c: Char) {
     this.getPoint(pointToBeChanged.x, pointToBeChanged.y, pointToBeChanged.z)?.value = c
 }
@@ -73,6 +77,13 @@ fun List<List<Point>>.floodFromOutside(empty: Char = '.', replacement: Char = 'O
 }
 
 fun List<List<Point>>.copy(): List<List<Point>> = this.map { it.map { it.copy() }.toList() }.toList()
+
+fun List<List<Point>>.copyToZero(): List<List<Point>> {
+    val minX = this[0][0].x
+    val minY = this[0][0].y
+    val minZ = this[0][0].z
+    return this.map { it.map { it.copy(x = it.x - minX, y = it.y - minY, it.z - minZ) }.toList() }.toList()
+} 
 
 enum class WindDirection {
     N, NE, E, SE, S, SW, W, NW;
@@ -178,6 +189,7 @@ open class Point(val x: Int, val y: Int, var z: Int = 0, var value: Char = '.') 
         if (x != other.x) return false
         if (y != other.y) return false
         if (z != other.z) return false
+        if (value != other.value) return false
 
         return true
     }
@@ -416,6 +428,29 @@ private fun getSurroundingPositions(p: Point): Map<WindDirection, Pos> {
         W to Pos(x - 1, y),
         NW to Pos(x - 1, y - 1)
     )
+}
+
+fun List<List<Point>>.inSquares(size: Int): List<List<List<List<Point>>>> {
+    val newList = mutableListOf<List<List<List<Point>>>>()
+    for (r in 0..<this.size step size) {
+        val newRowOfSquares = mutableListOf<List<List<Point>>>()
+        for (c in 0..<this[0].size step size) {
+            newRowOfSquares += this.getSquare(minX = c, maxX = c + size - 1, minY = r, maxY = r + size - 1).copyToZero()
+        }
+        newList += newRowOfSquares
+    }
+    return newList
+}
+
+fun List<List<List<List<Point>>>>.expandFromSquares(size: Int): List<List<Point>> {
+    val grid = initEmptyGrid(endX = (size * this[0].size) - 1, endY = (size * this.size) - 1)
+    for (y in 0..<grid.size) {
+        for (x in 0..<grid[0].size) {
+            val value = this[y / size][x / size][y % size][x % size].value
+            grid.changePoint(x, y, value)
+        }
+    }
+    return grid
 }
 
 fun List<List<Point>>.getSquare(minX: Int, maxX: Int, minY: Int, maxY: Int): List<List<Point>> =
