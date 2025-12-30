@@ -455,6 +455,46 @@ fun Pair<Point, Point>.getXRange(): IntRange =
 fun Pair<Point, Point>.getYRange(): IntRange =
     min(first.y, second.y) .. max(first.y, second.y)
 
+fun List<List<Point>>.allRotations(): List<List<List<Point>>> =
+    listOf(
+        this,
+        this.flip(),
+        this.rotate(1),
+        this.rotate(1).flip(),
+        this.rotate(2),
+        this.rotate(2).flip(),
+        this.rotate(3),
+        this.rotate(3).flip(),
+    )
+
+fun List<List<Point>>.rotateOnce(): List<List<Point>> {
+    require(this[0][0].x == 0 && this[0][0].y == 0)
+    val rotatedGrid = this.copy()
+    for (r in 0..<this.size) {
+        for (c in 0..<this[0].size) {
+            rotatedGrid[c][size - 1 - r].value = this[r][c].value 
+        }
+    }
+    return rotatedGrid
+}
+
+fun List<List<Point>>.rotate(times: Int = 1): List<List<Point>> {
+    var newGrid = this.rotateOnce()
+    repeat(times - 1) { newGrid = newGrid.rotateOnce() }
+    return newGrid
+}
+
+fun List<List<Point>>.flip(): List<List<Point>> {
+    require(this[0][0].x == 0 && this[0][0].y == 0)
+    val flippedGrid = this.copy()
+    for (r in 0..<this.size) {
+        for (c in 0..<this[0].size) {
+            flippedGrid[r][c].value = this[r][this[0].size - 1 - c].value
+        }
+    }
+    return flippedGrid
+}
+
 fun List<List<Point>>.getRow(y: Int): List<Point> = this[y]
 
 fun List<List<Point>>.getRows(): List<List<Point>> = this
