@@ -19,8 +19,8 @@ class Puzzle(private val input: List<String>) {
         val visitedFrequencies = mutableSetOf<Int>()
         val firstDuplicate =
             frequencyChanges
-                .runningFold(0) { a, b -> a + b }
-                .first { !visitedFrequencies.add(it) }
+                .runningFold(0) { currentFrequency, change -> currentFrequency + change }
+                .first { currentFrequency -> !visitedFrequencies.add(currentFrequency) }
         println(firstDuplicate)
     }
 }
