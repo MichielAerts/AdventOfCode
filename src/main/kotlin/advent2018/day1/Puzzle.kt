@@ -15,15 +15,13 @@ class Puzzle(private val input: List<String>) {
     }
 
     fun runPart2() {
-        val frequencyChanges = input.map { it.toInt() }.asRepeatedSequence().iterator()
+        val frequencyChanges = input.map { it.toInt() }.asRepeatedSequence()
         val visitedFrequencies = mutableSetOf<Int>()
-        var currentFrequency = 0
-        while(true) {
-            currentFrequency += frequencyChanges.next()
-            if (currentFrequency in visitedFrequencies) break
-            visitedFrequencies += currentFrequency
-        }
-        println(currentFrequency)
+        val firstDuplicate =
+            frequencyChanges
+                .runningFold(0) { a, b -> a + b }
+                .first { !visitedFrequencies.add(it) }
+        println(firstDuplicate)
     }
 }
 
