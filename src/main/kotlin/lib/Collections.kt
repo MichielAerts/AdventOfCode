@@ -85,6 +85,21 @@ fun <E> List<E>.splitBy(splitter: (E) -> Boolean): List<List<E>> {
     return list;
 }
 
+fun <E> List<E>.splitBeforeInclusive(splitter: (E) -> Boolean): List<List<E>> {
+    val list = mutableListOf<MutableList<E>>()
+    var currentList = mutableListOf<E>()
+    for (item in this) {
+        if (splitter(item)) {
+            if (currentList.isNotEmpty()) list += currentList;
+            currentList = mutableListOf(item);
+        } else {
+            currentList += item;
+        }
+    }
+    if (currentList.isNotEmpty()) list += currentList
+    return list
+}
+
 fun IntRange.containsRange(o: IntRange): Boolean {
     if (this.first > this.last || o.first > o.last) throw IllegalStateException("only incrementing IntRange supported")
     return o.first >= this.first && o.last <= this.last
