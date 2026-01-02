@@ -12,7 +12,6 @@ class Puzzle(private val input: List<String>) {
     }
 
     fun runPart2() {
-        println(input)
     }
 }
 
