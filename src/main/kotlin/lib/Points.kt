@@ -1,5 +1,6 @@
 package lib
 
+import advent2018.day13.Turn
 import lib.Direction.*
 import lib.WindDirection.*
 import kotlin.math.absoluteValue
@@ -137,7 +138,7 @@ enum class Direction {
         RIGHT -> UP
         LEFT -> DOWN
     }
-
+    
     companion object {
         fun getDirectionFromFirstLetter(input: String): Direction {
             return when (input) {
