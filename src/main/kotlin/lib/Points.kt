@@ -1,6 +1,5 @@
 package lib
 
-import advent2018.day13.Turn
 import lib.Direction.*
 import lib.WindDirection.*
 import kotlin.math.absoluteValue
@@ -468,6 +467,12 @@ fun List<List<Point>>.getPoint(pos: Pos): Point? = getPoint(pos.x, pos.y)
 fun List<List<Point>>.getPointAfterMoveSure(current: Point, direction: Direction): Point = 
     getPointAfterMove(current, direction)!!
 
+fun List<List<Point>>.getPointInDirectionSure(current: Point, direction: Direction): Point =
+    getPointAfterMove(current, direction)!!
+
+fun List<List<Point>>.getPointInDirection(current: Point, direction: Direction): Point? =
+    getPointAfterMove(current, direction)
+
 fun List<List<Point>>.getPointAfterMove(current: Point, direction: Direction, times: Int = 1): Point? = when(direction) {
     UP -> this.getPoint(current.x, current.y - times)
     DOWN -> this.getPoint(current.x, current.y + times)
@@ -536,6 +541,13 @@ fun List<List<Point>>.getRow(y: Int): List<Point> = this[y]
 fun List<List<Point>>.getRows(): List<List<Point>> = this
 
 fun List<List<Point>>.getColumn(x: Int): List<Point> = this.map { it[x] }
+
+fun List<List<Point>>.getViewFrom(p: Point, direction: Direction): List<Point> = when(direction) {
+    UP -> this.getColumn(p.x).subList(0, p.y).reversed()
+    DOWN -> this.getColumn(p.x).subListTillEnd(p.y + 1)
+    RIGHT -> this.getRow(p.y).subListTillEnd(p.x + 1)
+    LEFT -> this.getRow(p.y).subList(0, p.x).reversed()    
+}
 
 fun List<List<Point>>.allLinesInGrid(): List<List<Point>> = 
     listOf(

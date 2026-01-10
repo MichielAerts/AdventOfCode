@@ -28,6 +28,18 @@ inline fun <T> Iterable<T>.takeWhileInclusive(
     }
 }
 
+inline fun <T> Iterable<T>.takeUntil(
+    predicate: (T) -> Boolean
+): List<T> {
+    val list = ArrayList<T>()
+    for (item in this) {
+        if (predicate(item))
+            break
+        list.add(item)
+    }
+    return list
+}
+
 fun cartesianProduct(a: List<String>, b: List<String>, vararg others: List<String>): List<List<String>> =
     (listOf(a, b).plus(others))
         .fold(listOf(listOf<String>())) { acc, set ->
@@ -84,6 +96,9 @@ fun <E> List<E>.splitBy(splitter: (E) -> Boolean): List<List<E>> {
     if (currentList.isNotEmpty()) list += currentList
     return list;
 }
+
+fun <E, R: Comparable<R>> List<E>.filterAllWithMaxOf(selector: (E) -> R): List<E> =
+    this.filter { selector(it) == maxOf(selector) }
 
 fun <E> List<E>.splitBeforeInclusive(splitter: (E) -> Boolean): List<List<E>> {
     val list = mutableListOf<MutableList<E>>()
