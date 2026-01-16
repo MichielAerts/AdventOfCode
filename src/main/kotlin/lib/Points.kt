@@ -170,6 +170,13 @@ open class Point(val x: Int, val y: Int, var z: Int = 0, var value: Char = '.') 
         return newP
     }
 
+    fun next(direction: Direction) = when(direction) {
+        UP -> Point(this.x, this.y - 1)
+        DOWN -> Point(this.x, this.y + 1)
+        RIGHT -> Point(this.x + 1, this.y)
+        LEFT -> Point(this.x - 1, this.y)
+    }
+    
     fun pos(): Pos = Pos(x, y)
     
     fun getDistanceTo(other: Point): Distance = Distance(other.x - x, other.y - y, other.z - z)
