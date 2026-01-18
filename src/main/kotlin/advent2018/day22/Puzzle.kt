@@ -1,6 +1,6 @@
 package advent2018.day22
 
-import advent2018.day22.EquippedTools.*
+import advent2018.day22.EquippedTool.*
 import lib.*
 import java.io.File
 import java.util.*
@@ -29,7 +29,7 @@ class Puzzle(private val input: List<String>) {
     }
 
     fun runPart2() {
-        val buffer = 50
+        val buffer = 100
         val depth = 11991
         val targetPos = Pos(6, 797)
         val cave = initEmptyGrid(endX = targetPos.x + buffer, endY = targetPos.y + buffer)
@@ -46,6 +46,7 @@ class Puzzle(private val input: List<String>) {
             Climber(target, TORCH)
         )
         println(time)
+        path.forEach { println(it) }
     }
     
     private fun Point.geologicalIndex(
@@ -78,11 +79,11 @@ private fun Point.allowedTools() = when (this.type()) {
     else -> throw IllegalArgumentException()
 }
 
-enum class EquippedTools {
+enum class EquippedTool {
     TORCH, CLIMBING_GEAR, NEITHER;
 }
 
-data class Climber(val point: Point, val equippedTools: EquippedTools)
+data class Climber(val point: Point, val equippedTool: EquippedTool)
 
 private fun List<List<Point>>.shortestTimeBetween(source: Climber, target: Climber): Pair<Int, List<Climber>> {
     val climbersAndMinimumTimes = mutableMapOf<Climber, Int>().withDefault { Int.MAX_VALUE }
@@ -91,19 +92,21 @@ private fun List<List<Point>>.shortestTimeBetween(source: Climber, target: Climb
     val pq = PriorityQueue<Pair<Climber, Int>>(compareBy { it.second })
     pq.add(source to 0)
 
-    while(pq.isNotEmpty()) {
+    while (pq.isNotEmpty()) {
         val (climber, timeSpent) = pq.remove()
-        for (neighbour in this.getDirectNeighbours(climber.point).neighbours) {
-            val nextClimbersPlusTime = neighbour.allowedTools()
-                .map { Climber(neighbour, it) to if (it == climber.equippedTools) 1 else 8 }
-            for ((nextClimber, timeForMove) in nextClimbersPlusTime) {
-                val currentMinimumTime = climbersAndMinimumTimes.getValue(nextClimber)
-                val newSpentTime = timeSpent + timeForMove
-                if (newSpentTime < currentMinimumTime) {
-                    climbersAndMinimumTimes[nextClimber] = newSpentTime
-                    pq.add(nextClimber to newSpentTime)
-                    previous[nextClimber] = climber
-                }
+        val nextClimbersPlusTime = mutableListOf<Pair<Climber, Int>>()
+        nextClimbersPlusTime += climber.point.allowedTools().filter { it != climber.equippedTool }
+            .map { Climber(climber.point, it) to 7 } //switch tool
+        nextClimbersPlusTime += this.getDirectNeighbours(climber.point).neighbours.filter { climber.equippedTool in it.allowedTools() }
+            .map { Climber(it, climber.equippedTool) to 1 } //move with current tool
+
+        for ((nextClimber, timeForMove) in nextClimbersPlusTime) {
+            val currentMinimumTime = climbersAndMinimumTimes.getValue(nextClimber)
+            val newSpentTime = timeSpent + timeForMove
+            if (newSpentTime < currentMinimumTime) {
+                climbersAndMinimumTimes[nextClimber] = newSpentTime
+                pq.add(nextClimber to newSpentTime)
+                previous[nextClimber] = climber
             }
         }
     }
