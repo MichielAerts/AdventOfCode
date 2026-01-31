@@ -97,9 +97,6 @@ fun <E> List<E>.splitBy(splitter: (E) -> Boolean): List<List<E>> {
     return list;
 }
 
-fun <E, R: Comparable<R>> List<E>.filterAllWithMaxOf(selector: (E) -> R): List<E> =
-    this.filter { selector(it) == maxOf(selector) }
-
 fun <E> List<E>.splitBeforeInclusive(splitter: (E) -> Boolean): List<List<E>> {
     val list = mutableListOf<MutableList<E>>()
     var currentList = mutableListOf<E>()
@@ -149,6 +146,22 @@ fun <E> List<E>.allPairs(): List<Pair<E, E>> {
             }
         }
         pairs
+    }
+}
+
+fun <E> List<E>.allTriples(): List<Triple<E, E, E>> {
+    val triples = mutableListOf<Triple<E, E, E>>()
+    return if (size < 3) {
+        return triples
+    } else {
+        for (i in 0..<size) {
+            for (j in (i + 1)..<size) {
+                for (k in (j + 1)..<size) {
+                    triples += Triple(this[i], this[j], this[k])
+                }
+            }
+        }
+        triples
     }
 }
 
