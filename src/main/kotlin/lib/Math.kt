@@ -1,6 +1,7 @@
 package lib
 
 import org.apache.commons.math3.util.ArithmeticUtils.gcd
+import kotlin.math.max
 import kotlin.math.sqrt
 
 fun solveQuadraticEquation(a: Double, b: Double, c: Double): Pair<Double, Double>? {
@@ -13,6 +14,9 @@ fun solveQuadraticEquation(a: Double, b: Double, c: Double): Pair<Double, Double
     val root2 = (-b - sqrt(discriminant)) / (2 * a)
     return Pair(root1, root2)
 }
+
+fun maxOfTriple(a: Long, b: Long, c: Long) =
+    max(a, max(b, c))
 
 fun solveQuadraticEquationWithZeroA(a: Double, b: Double, c: Double): Pair<Double, Double>? {
     if (a == 0.0) {
